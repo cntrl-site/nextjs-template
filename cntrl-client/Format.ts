@@ -1,0 +1,211 @@
+// TODO consider shared types with all others
+
+export interface RichTextEntity {
+  start: number;
+  end: number;
+  // TODO: @tkustov update with enum
+  type: string;
+  data?: any;
+}
+
+export interface RichTextStyle {
+  start: number;
+  end: number;
+  style: string;
+  value?: string;
+}
+
+export interface RichTextBlock {
+  start: number;
+  end: number;
+  type: string;
+  entities?: RichTextEntity[];
+  children?: RichTextBlock[];
+  data?: any;
+}
+
+
+export enum ArticleItemType {
+  Image = 'image',
+  Text = 'text',
+  RichText = 'richtext',
+  Video = 'video',
+  Rectangle = 'rectangle',
+  Embed = 'embed',
+  Custom = 'custom'
+}
+
+export enum TextAlign {
+  Start = 'start',
+  End = 'end',
+  Center = 'center',
+  Justify = 'justify'
+}
+
+export interface RichTextStyle {
+  start: number;
+  end: number;
+  style: string;
+  value?: string;
+}
+
+export interface Project {
+  pages: Page[];
+}
+
+interface Page {
+  title: string;
+  articleId: string;
+  slug: string;
+}
+
+export interface Article {
+  id: string;
+  sections: Section[];
+}
+
+export interface Section {
+  id: string;
+  height: Record<Layout, number>;
+  visible: Record<Layout, boolean>;
+  items: Item[];
+}
+
+export type Item =
+  | ImageItem
+  | VideoItem
+  | TextItem
+  | RichTextItem
+  | RectangleItem
+  | EmbedItem
+  | CustomItem;
+
+export interface ItemArea {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  zIndex: number;
+  angle: number;
+}
+
+type Layout = string;
+
+interface Link {
+  url: string;
+  target: string;
+}
+
+interface ItemBase {
+  id: string;
+  area: Record<Layout, ItemArea>;
+  visible: Record<Layout, boolean>;
+  type: ArticleItemType;
+  link?: {
+    url: string;
+    target: string;
+  };
+  commonParams?: any;
+  layoutParams?: Record<Layout, any>;
+}
+
+export interface ImageItem extends ItemBase {
+  type: ArticleItemType.Image;
+  commonParams: {
+    url: string;
+  };
+  layoutParams: Record<
+    Layout,
+    {
+      fullwidth: boolean;
+      opacity: number;
+      radius: number;
+      strokeWidth: number;
+      fillColor: string;
+      strokeColor: string;
+      strokeOpacity: number;
+    }
+    >;
+}
+
+export interface VideoItem extends ItemBase {
+  type: ArticleItemType.Video;
+  commonParams: {
+    url: string;
+  };
+  layoutParams: Record<
+    Layout,
+    {
+      fullwidth: boolean;
+      autoplay: boolean;
+      radius: number;
+      opacity: number;
+      strokeWidth: number;
+      fillColor: string;
+      strokeColor: string;
+      strokeOpacity: number;
+    }
+    >;
+}
+
+export interface TextItem extends ItemBase {
+  type: ArticleItemType.Text;
+  commonParams: {
+    content: string;
+    fontFamily: string;
+    fontStyle: string;
+  };
+  layoutParams: Record<
+    Layout,
+    {
+      align: TextAlign;
+      fontSize: number;
+      letterSpacing: number;
+      lineHeight: number;
+      opacity: number;
+      textColor: string;
+      wordSpacing: number;
+    }
+    >;
+}
+
+export interface RichTextItem extends ItemBase {
+  type: ArticleItemType.RichText,
+  commonParams: {
+    text: string;
+    blocks?: RichTextBlock[];
+    styles?: RichTextStyle[];
+  },
+  layoutParams: Record<Layout, {
+    styles?: RichTextStyle[];
+    opacity: number;
+  }>
+}
+
+export interface RectangleItem extends ItemBase {
+  type: ArticleItemType.Rectangle;
+  layoutParams: Record<
+    Layout,
+    {
+      radius: number;
+      opacity: number;
+      strokeWidth: number;
+      fillColor: string;
+      strokeColor: string;
+      strokeOpacity: number;
+      fullwidth: boolean;
+    }
+    >;
+}
+
+export interface EmbedItem extends ItemBase {
+  type: ArticleItemType.Embed;
+  commonParams: {
+    content: string;
+  };
+}
+
+export interface CustomItem extends ItemBase {
+  type: ArticleItemType.Custom;
+  commonParams?: any;
+}
