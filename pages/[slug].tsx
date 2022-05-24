@@ -1,16 +1,18 @@
 import type { GetStaticProps, NextPage } from 'next'
 import { CntrlClient } from '../cntrl-client/CntrlClient';
-import { Article } from '../cntrl-client/Format';
+import { Article as TArticle } from '../cntrl-client/Format';
+import Article from '../cntrl-client/components/Article';
+
 
 const client = new CntrlClient(process.env.CNTRL_PROJECT_ID!);
 
 interface Props {
-  article: Article;
+  article: TArticle;
 }
 
-const Article: NextPage<Props> = (props) => {
+const Page: NextPage<Props> = (props) => {
   return (
-    <div>{props.article.sections[0].items.map(item => item.id).join(', ')}</div>
+    <Article article={props.article} />
   );
 };
 
@@ -41,4 +43,4 @@ export async function getStaticPaths() {
   return { paths, fallback: false };
 }
 
-export default Article
+export default Page
