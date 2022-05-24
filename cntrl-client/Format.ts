@@ -49,7 +49,16 @@ export interface RichTextStyle {
   value?: string;
 }
 
+interface Meta {
+  favicon?: string;
+  title?: string;
+  description?: string;
+  keywords?: string;
+}
+
 export interface Project {
+  title: string;
+  meta?: Meta;
   pages: Page[];
 }
 
