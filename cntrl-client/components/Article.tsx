@@ -1,23 +1,25 @@
 import { FC } from 'react';
-import { Article as TArticle } from '../Format';
-import { createUseStyles } from 'react-jss';
+import { Article as TArticle, Layout } from '../Format';
+import Section from './Section';
+import Item from './Item';
 
 interface Props {
   article: TArticle;
+  layouts: Layout[];
 }
 
-const useStyles = createUseStyles({
-  someDiv: {
-    color: 'red'
-  }
-})
-
-const Article: FC<Props> = ({ article }) => {
-  const styles = useStyles();
+const Article: FC<Props> = ({ article, layouts }) => {
   return (
-    <div className={styles.someDiv}>
-      {article.sections[0].items.map(item => item.id).join(', ')}
-    </div>
+    <>
+      {article.sections.map((section, i) => (
+        <Section section={section} key={section.id} layouts={layouts}>
+          {article.sections[i].items.map(item => (
+            // eslint-disable-next-line react/jsx-key
+            <Item layouts={layouts} item={item} />
+          ))}
+        </Section>
+      ))}
+    </>
   );
 };
 

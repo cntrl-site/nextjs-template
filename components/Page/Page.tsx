@@ -16,7 +16,7 @@ const Page: FC<Props> = ({ article, project }) => {
         <meta name="description" content={project.meta?.description} />
         <link rel="icon" href={project.meta?.favicon} />
       </Head>
-      <Article article={article} />
+      <Article article={article} layouts={project.layouts} />
     </>
   );
 };

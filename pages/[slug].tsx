@@ -38,7 +38,7 @@ export async function getStaticPaths() {
   const paths = res.pages.map((page) => ({
     params: {
       slug: page.slug
-    },
+    }
   }));
 
   return { paths, fallback: false };

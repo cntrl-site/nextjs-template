@@ -56,10 +56,16 @@ interface Meta {
   keywords?: string;
 }
 
+export interface Layout {
+  startsWith: number;
+  id: string;
+}
+
 export interface Project {
   title: string;
   meta?: Meta;
   pages: Page[];
+  layouts: Layout[];
 }
 
 interface Page {
@@ -75,8 +81,8 @@ export interface Article {
 
 export interface Section {
   id: string;
-  height: Record<Layout, number>;
-  visible: Record<Layout, boolean>;
+  height: Record<LayoutId, number>;
+  visible: Record<LayoutId, boolean>;
   items: Item[];
 }
 
@@ -98,7 +104,7 @@ export interface ItemArea {
   angle: number;
 }
 
-type Layout = string;
+type LayoutId = string;
 
 interface Link {
   url: string;
@@ -107,15 +113,15 @@ interface Link {
 
 interface ItemBase {
   id: string;
-  area: Record<Layout, ItemArea>;
-  visible: Record<Layout, boolean>;
+  area: Record<LayoutId, ItemArea>;
+  visible: Record<LayoutId, boolean>;
   type: ArticleItemType;
   link?: {
     url: string;
     target: string;
   };
   commonParams?: any;
-  layoutParams?: Record<Layout, any>;
+  layoutParams?: Record<LayoutId, any>;
 }
 
 export interface ImageItem extends ItemBase {
@@ -124,7 +130,7 @@ export interface ImageItem extends ItemBase {
     url: string;
   };
   layoutParams: Record<
-    Layout,
+    LayoutId,
     {
       fullwidth: boolean;
       opacity: number;
@@ -143,7 +149,7 @@ export interface VideoItem extends ItemBase {
     url: string;
   };
   layoutParams: Record<
-    Layout,
+    LayoutId,
     {
       fullwidth: boolean;
       autoplay: boolean;
@@ -165,7 +171,7 @@ export interface TextItem extends ItemBase {
     fontStyle: string;
   };
   layoutParams: Record<
-    Layout,
+    LayoutId,
     {
       align: TextAlign;
       fontSize: number;
@@ -185,7 +191,7 @@ export interface RichTextItem extends ItemBase {
     blocks?: RichTextBlock[];
     styles?: RichTextStyle[];
   },
-  layoutParams: Record<Layout, {
+  layoutParams: Record<LayoutId, {
     styles?: RichTextStyle[];
     opacity: number;
   }>
@@ -194,7 +200,7 @@ export interface RichTextItem extends ItemBase {
 export interface RectangleItem extends ItemBase {
   type: ArticleItemType.Rectangle;
   layoutParams: Record<
-    Layout,
+    LayoutId,
     {
       radius: number;
       opacity: number;
