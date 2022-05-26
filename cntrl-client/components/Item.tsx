@@ -4,11 +4,8 @@ import RectangleItem from './RectangleItem';
 import { createUseStyles } from 'react-jss';
 import { getLayoutStyles } from '../utils';
 
-interface Props extends ItemComponentProps {
+interface ItemProps {
   layouts: Layout[];
-}
-
-interface ItemComponentProps {
   item: Item;
 }
 
@@ -17,15 +14,14 @@ interface StyleParams {
   layouts: Layout[];
 }
 
-// @ts-ignore
-const itemsMap: Record<ArticleItemType, ComponentType<ItemComponentProps>> = {
+const itemsMap: Record<ArticleItemType, ComponentType<ItemProps>> = {
+  // @ts-ignore
   [ArticleItemType.Rectangle]: RectangleItem
 };
 
 const useStyles = createUseStyles({
   item: ({ area, layouts }: StyleParams) => ({
     position: 'absolute',
-    backgroundColor: '#000',
     ...getLayoutStyles(layouts, area, (area) => ({
       top: `${area.top * 100}vw`,
       left: `${area.left * 100}vw`,
@@ -36,12 +32,14 @@ const useStyles = createUseStyles({
   })
 });
 
-const Item: FC<Props> = ({ item, layouts }) => {
+const noop = () => null;
+
+const Item: FC<ItemProps> = ({ item, layouts }) => {
   const styles = useStyles({ area: item.area, layouts });
-  const ItemComponent = itemsMap[item.type];
+  const ItemComponent = itemsMap[item.type] || noop;
   return (
     <div className={styles.item}>
-      <ItemComponent item={item} />
+      <ItemComponent item={item} layouts={layouts} />
     </div>
   );
 };
