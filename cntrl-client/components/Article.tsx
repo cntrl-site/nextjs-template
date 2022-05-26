@@ -14,8 +14,7 @@ const Article: FC<Props> = ({ article, layouts }) => {
       {article.sections.map((section, i) => (
         <Section section={section} key={section.id} layouts={layouts}>
           {article.sections[i].items.map(item => (
-            // eslint-disable-next-line react/jsx-key
-            <Item layouts={layouts} item={item} />
+            <Item layouts={layouts} item={item} key={item.id} />
           ))}
         </Section>
       ))}

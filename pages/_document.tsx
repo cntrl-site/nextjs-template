@@ -25,6 +25,6 @@ class JssDocument extends Document {
           <style id="server-side-styles">{registry.toString()}</style>
         </>
       )
-    }
+    };
   }
 }
