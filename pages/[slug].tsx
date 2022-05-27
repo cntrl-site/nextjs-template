@@ -1,18 +1,17 @@
 import type { GetStaticProps, NextPage } from 'next'
 import { CntrlClient } from '../cntrl-client/CntrlClient';
-import { Article } from '../cntrl-client/Format';
+import { Article as TArticle, Project } from '../cntrl-client/Format';
+import Page from '../components/Page/Page';
+
 
 const client = new CntrlClient(process.env.CNTRL_PROJECT_ID!);
 
 interface Props {
-  article: Article;
+  article: TArticle;
+  project: Project;
 }
 
-const Article: NextPage<Props> = (props) => {
-  return (
-    <div>{props.article.sections[0].items.map(item => item.id).join(', ')}</div>
-  );
-};
+const CntrlPage: NextPage<Props> = (props) => <Page project={props.project} article={props.article} />;
 
 type ParamsWithSlug = {
   slug: string;
@@ -22,11 +21,13 @@ export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ para
   if (params?.slug === undefined) {
     throw new Error('Slug is not defined');
   }
-  const res = await client.getPageArticle(params.slug);
+  const project = await client.getProject();
+  const article = await client.getPageArticle(params.slug);
 
   return {
     props: {
-      article: res
+      project,
+      article
     }
   }
 };
@@ -35,10 +36,12 @@ export async function getStaticPaths() {
   const res = await client.getProject();
 
   const paths = res.pages.map((page) => ({
-    params: { slug: page.slug },
+    params: {
+      slug: page.slug
+    }
   }));
 
   return { paths, fallback: false };
 }
 
-export default Article
+export default CntrlPage;
