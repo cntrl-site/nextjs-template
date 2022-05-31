@@ -3,14 +3,14 @@ import { CSSProperties } from 'react';
 
 export function getLayoutStyles<V, M extends object> (
   layouts: Layout[],
-  layoutValues: Record<string, V>,
-  mapToStyles: (values: V) => M): Record<string, any> {
+  layoutValues: Record<string, V>[],
+  mapToStyles: (values: V[]) => M): Record<string, any> {
   const mediaQueries = layouts.reduce((acc, layout) => {
-    const value = layoutValues[layout.id] ?? getClosestLayoutValue(layoutValues, layouts, layout.id);
+    const values = layoutValues.map(lv => lv[layout.id] ?? getClosestLayoutValue(lv, layouts, layout.id));
     return {
       ...acc,
       [`@media (min-width: ${layout.startsWith}px)`]: {
-        ...mapToStyles(value)
+        ...mapToStyles(values)
       }
     };
   }, {});

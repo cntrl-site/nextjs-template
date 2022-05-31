@@ -1,35 +1,35 @@
 import { FC } from 'react';
-import { Layout, RectangleItem } from '../Format';
+import { ItemProps } from './Item';
 import { createUseStyles } from 'react-jss';
 import { getLayoutStyles } from '../utils';
-import { ItemProps } from './Item';
+import { ImageItem, Layout } from '../Format';
 
 interface StylesParams {
   layouts: Layout[];
-  layoutParams: RectangleItem['layoutParams'];
+  layoutParams: ImageItem['layoutParams'];
 }
 
 const useStyles = createUseStyles({
-  rectangleItem: ({ layouts, layoutParams }: StylesParams) => ({
-    position: 'absolute',
+  imageItem: ({ layouts, layoutParams }: StylesParams) => ({
     width: '100%',
     height: '100%',
+    position: 'absolute',
     ...getLayoutStyles(layouts, [layoutParams],
-      ([{ opacity, strokeColor, fillColor, radius, strokeWidth }]) => ({
+      ([{ opacity, radius, strokeColor, strokeWidth }]) => ({
         opacity: opacity,
         borderColor: strokeColor,
-        backgroundColor: fillColor,
         borderRadius: `${radius * 100}vw`,
         borderWidth: `${strokeWidth * 100}vw`
     }))
   })
 });
 
-const RectangleItem: FC<ItemProps<RectangleItem>> = ({ item, layouts }) => {
+const ImageItem: FC<ItemProps<ImageItem>> = ({ item, layouts }) => {
+  // @ts-ignore
   const styles = useStyles({ layouts, layoutParams: item.layoutParams });
   return (
-    <div className={styles.rectangleItem} />
-  );
-};
+    <img src={item.commonParams.url} className={styles.imageItem} />
+  )
+}
 
-export default RectangleItem;
+export default ImageItem;

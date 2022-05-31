@@ -19,7 +19,7 @@ interface StyleParams {
 const useStyles = createUseStyles({
   section: ({ height, layouts }: StyleParams) => ({
     position: 'relative',
-    ...getLayoutStyles(layouts, height, (height) => ({
+    ...getLayoutStyles(layouts, [height], ([height]) => ({
       height: `${height * 100}vw`
     }))
   })

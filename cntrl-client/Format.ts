@@ -136,7 +136,6 @@ export interface ImageItem extends ItemBase {
       opacity: number;
       radius: number;
       strokeWidth: number;
-      fillColor: string;
       strokeColor: string;
       strokeOpacity: number;
     }
