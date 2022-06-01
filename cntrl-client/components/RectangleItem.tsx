@@ -14,6 +14,8 @@ const useStyles = createUseStyles({
     position: 'absolute',
     width: '100%',
     height: '100%',
+    borderStyle: 'solid',
+    boxSizing: 'border-box',
     ...getLayoutStyles(layouts, [layoutParams],
       ([{ opacity, strokeColor, fillColor, radius, strokeWidth }]) => ({
         opacity: opacity,
