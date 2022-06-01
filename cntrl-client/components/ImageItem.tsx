@@ -25,7 +25,6 @@ const useStyles = createUseStyles({
 });
 
 const ImageItem: FC<ItemProps<ImageItem>> = ({ item, layouts }) => {
-  // @ts-ignore
   const styles = useStyles({ layouts, layoutParams: item.layoutParams });
   return (
     <img src={item.commonParams.url} className={styles.imageItem} />

@@ -23,9 +23,7 @@ const useStyles = createUseStyles({
 });
 
 const VideoItem: FC<ItemProps<VideoItem>> = ({ item, layouts}) => {
-  // @ts-ignore
   const styles = useStyles({ layouts, layoutParams: item.layoutParams });
-
   return (
     <video autoPlay muted loop playsInline className={styles.videoItem}>
       <source src={item.commonParams.url} />
