@@ -54,6 +54,12 @@ interface Meta {
   title?: string;
   description?: string;
   keywords?: string;
+  opengraphThumbnail?: string;
+}
+
+interface Fonts {
+  google: string;
+  adobe: string;
 }
 
 export interface Layout {
@@ -66,6 +72,8 @@ export interface Project {
   meta?: Meta;
   pages: Page[];
   layouts: Layout[];
+  scripts: string;
+  fonts: Fonts;
 }
 
 interface Page {
