@@ -49,7 +49,7 @@ export interface RichTextStyle {
   value?: string;
 }
 
-interface Meta {
+export interface Meta {
   favicon?: string;
   title?: string;
   description?: string;
@@ -69,17 +69,25 @@ export interface Layout {
 
 export interface Project {
   title: string;
-  meta?: Meta;
-  pages: Page[];
+  meta: Meta;
+  pages: TPage[];
   layouts: Layout[];
   scripts: string;
   fonts: Fonts;
 }
 
-interface Page {
+export interface PageMeta {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  opengraphThumbnail?: string;
+}
+
+export interface TPage {
   title: string;
   articleId: string;
   slug: string;
+  meta: PageMeta;
 }
 
 export interface Article {
