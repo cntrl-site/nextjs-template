@@ -18,7 +18,8 @@ const CntrlPage: NextPage<Props> = (props) => {
     <Page
       project={props.project}
       article={props.article}
-      meta={meta} />
+      meta={meta}
+    />
   );
 }
 

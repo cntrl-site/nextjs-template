@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
+import HTMLReactParser from 'html-react-parser';
 import Head from 'next/head';
 import { Article as TArticle, Meta, Project } from '../../cntrl-client/Format';
 import Article from '../../cntrl-client/components/Article';
-import HTMLReactParser from 'html-react-parser';
 
 interface Props {
   article: TArticle;
