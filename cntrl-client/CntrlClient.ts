@@ -1,4 +1,4 @@
-import { Article, Project } from './Format';
+import { Article, Meta, PageMeta, Project } from './Format';
 
 const API_URL = process.env.CNTRL_API_URL;
 
@@ -36,5 +36,15 @@ export class CntrlClient {
     const articleData = await articleResponse.json() as Article;
 
     return articleData;
+  }
+
+  public static getPageMeta(projectMeta: Meta, pageMeta: PageMeta): Meta {
+    return {
+      title: pageMeta.title ? pageMeta.title : projectMeta.title,
+      description: pageMeta.description ? pageMeta.description : projectMeta.description,
+      keywords: pageMeta.keywords ? pageMeta.keywords : projectMeta.keywords,
+      opengraphThumbnail: pageMeta.opengraphThumbnail ? pageMeta.opengraphThumbnail : projectMeta.opengraphThumbnail,
+      favicon: projectMeta.favicon
+    };
   }
 }

@@ -1,6 +1,6 @@
 import type { GetStaticProps, NextPage } from 'next'
 import { CntrlClient } from '../cntrl-client/CntrlClient';
-import { Article as TArticle, Project } from '../cntrl-client/Format';
+import { Article as TArticle, Project, TPage } from '../cntrl-client/Format';
 import Page from '../components/Page/Page';
 
 
@@ -9,9 +9,19 @@ const client = new CntrlClient(process.env.CNTRL_PROJECT_ID!);
 interface Props {
   article: TArticle;
   project: Project;
+  page: TPage;
 }
 
-const CntrlPage: NextPage<Props> = (props) => <Page project={props.project} article={props.article} />;
+const CntrlPage: NextPage<Props> = (props) => {
+  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta);
+  return (
+    <Page
+      project={props.project}
+      article={props.article}
+      meta={meta}
+    />
+  );
+}
 
 type ParamsWithSlug = {
   slug: string;
@@ -23,11 +33,13 @@ export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ para
   }
   const project = await client.getProject();
   const article = await client.getPageArticle(params.slug);
+  const page = project.pages.find(page => page.slug === params.slug);
 
   return {
     props: {
       project,
-      article
+      article,
+      page
     }
   }
 };

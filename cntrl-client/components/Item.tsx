@@ -3,39 +3,54 @@ import { ArticleItemType, Item, Layout } from '../Format';
 import RectangleItem from './RectangleItem';
 import { createUseStyles } from 'react-jss';
 import { getLayoutStyles } from '../utils';
+import ImageItem from './ImageItem';
+import VideoItem from './VideoItem';
 
-interface ItemProps {
+export interface ItemProps<I extends Item> {
   layouts: Layout[];
-  item: Item;
+  item: I;
 }
 
 interface StyleParams {
   area: Item['area'];
   layouts: Layout[];
+  layoutParams?: Item['layoutParams'];
 }
 
-const itemsMap: Record<ArticleItemType, ComponentType<ItemProps>> = {
-  // @ts-ignore
-  [ArticleItemType.Rectangle]: RectangleItem
+const itemsMap: Record<ArticleItemType, ComponentType<ItemProps<any>>> = {
+  [ArticleItemType.Rectangle]: RectangleItem,
+  [ArticleItemType.Image]: ImageItem,
+  [ArticleItemType.Video]: VideoItem,
+  [ArticleItemType.Custom]: () => null,
+  [ArticleItemType.Embed]: () => null,
+  [ArticleItemType.RichText]: () => null,
+  [ArticleItemType.Text]: () => null
 };
 
 const useStyles = createUseStyles({
-  item: ({ area, layouts }: StyleParams) => ({
-    position: 'absolute',
-    ...getLayoutStyles(layouts, area, (area) => ({
-      top: `${area.top * 100}vw`,
-      left: `${area.left * 100}vw`,
-      width: `${area.width * 100}vw`,
-      height: `${area.height * 100}vw`,
-      zIndex: area.zIndex
-    }))
-  })
+  item: ({ area, layoutParams, layouts }: StyleParams) => {
+    const layoutValues: Record<string, any>[] = [area];
+    if (layoutParams) {
+      layoutValues.push(layoutParams);
+    }
+    return {
+      position: 'absolute',
+      ...getLayoutStyles(layouts, layoutValues, ([area, layoutParams]) => ({
+        top: `${area.top * 100}vw`,
+        left: layoutParams?.fullwidth ? 0 : `${area.left * 100}vw`,
+        width: layoutParams?.fullwidth ? '100vw' : `${area.width * 100}vw`,
+        height: `${area.height * 100}vw`,
+        zIndex: area.zIndex,
+        transform: `rotate(${area.angle}deg)`
+      }))
+    };
+  }
 });
 
 const noop = () => null;
 
-const Item: FC<ItemProps> = ({ item, layouts }) => {
-  const styles = useStyles({ area: item.area, layouts });
+const Item: FC<ItemProps<Item>> = ({ item, layouts }) => {
+  const styles = useStyles({ area: item.area, layouts, layoutParams: item.layoutParams });
   const ItemComponent = itemsMap[item.type] || noop;
   return (
     <div className={styles.item}>
