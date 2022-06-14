@@ -116,10 +116,7 @@ interface ItemBase {
   area: Record<LayoutId, ItemArea>;
   visible: Record<LayoutId, boolean>;
   type: ArticleItemType;
-  link?: {
-    url: string;
-    target: string;
-  };
+  link?: Link;
   commonParams?: any;
   layoutParams?: Record<LayoutId, any>;
 }
