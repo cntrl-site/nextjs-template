@@ -12,6 +12,6 @@ COPY ./public ./public
 COPY ./cntrl-client ./cntrl-client
 COPY ./components ./components
 COPY ./pages ./pages
-ARG PUBLIC_URL
-ARG REACT_APP_API_URL
+ARG CNTRL_API_URL
+ARG CNTRL_PROJECT_ID
 RUN npm run export
