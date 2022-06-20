@@ -11,6 +11,7 @@ COPY ./tsconfig.json ./next.config.js ./
 COPY ./public ./public
 COPY ./cntrl-client ./cntrl-client
 COPY ./components ./components
+COPY ./styles ./styles
 COPY ./pages ./pages
 ARG CNTRL_API_URL
 ARG CNTRL_PROJECT_ID
