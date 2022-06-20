@@ -67,12 +67,18 @@ export interface Layout {
   id: string;
 }
 
+export interface AdditionalHTML {
+  head: string;
+  afterBodyOpen: string;
+  beforeBodyClose: string;
+}
+
 export interface Project {
   title: string;
   meta: Meta;
   pages: TPage[];
   layouts: Layout[];
-  scripts: string;
+  html: AdditionalHTML;
   fonts: Fonts;
 }
 

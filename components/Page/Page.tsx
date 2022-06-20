@@ -13,7 +13,9 @@ interface Props {
 const Page: FC<Props> = ({ article, project, meta }) => {
   const adobeFont = HTMLReactParser(project.fonts.adobe);
   const googleFont = HTMLReactParser(project.fonts.google);
-  const scripts = HTMLReactParser(project.scripts);
+  const htmlHead = HTMLReactParser(project.html.head);
+  const afterBodyOpen = HTMLReactParser(project.html.afterBodyOpen);
+  const beforeBodyClose = HTMLReactParser(project.html.beforeBodyClose);
   return (
     <>
       <Head>
@@ -24,9 +26,11 @@ const Page: FC<Props> = ({ article, project, meta }) => {
         <link rel="icon" href={meta.favicon} />
         {adobeFont}
         {googleFont}
-        {scripts}
+        {htmlHead}
       </Head>
+      {afterBodyOpen}
       <Article article={article} layouts={project.layouts} />
+      {beforeBodyClose}
     </>
   );
 };
