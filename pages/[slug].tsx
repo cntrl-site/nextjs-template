@@ -30,7 +30,7 @@ export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ para
   if (params?.slug === undefined) {
     throw new Error('Slug is not defined');
   }
-  const slug = params.slug === 'index' ? '' : params.slug;
+  const slug = params.slug === '/' ? '' : params.slug;
   const project = await client.getProject();
   const article = await client.getPageArticle(slug);
   const page = project.pages.find(page => page.slug === slug);
@@ -49,7 +49,7 @@ export async function getStaticPaths() {
 
   const paths = res.pages.map((page) => ({
     params: {
-      slug: page.slug === '' ? 'index' : page.slug
+      slug: page.slug === '' ? '/' : page.slug
     }
   }));
 
