@@ -1,5 +1,4 @@
-import { Article, Meta, PageMeta, Project, TPage } from './Format';
-import slug from '../pages/[slug]';
+import { Article, Meta, PageMeta, Project } from './Format';
 
 const API_URL = process.env.CNTRL_API_URL;
 
@@ -14,11 +13,7 @@ export class CntrlClient {
       throw new Error(`Failed to fetch project with id #${this.projectId}: ${response.statusText}`);
     }
     const data = await response.json() as Project;
-    const project = {
-      ...data,
-      pages: data.pages.filter(page => page.isPublished)
-    };
-    return project;
+    return data;
   }
 
   async getPageArticle(pageSlug: string): Promise<Article> {
