@@ -15,4 +15,5 @@ COPY ./styles ./styles
 COPY ./pages ./pages
 ARG CNTRL_API_URL
 ARG CNTRL_PROJECT_ID
+RUN date -u > ./build_date.txt
 RUN npm run export
