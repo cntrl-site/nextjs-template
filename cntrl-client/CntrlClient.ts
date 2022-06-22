@@ -1,4 +1,5 @@
 import { Article, Meta, PageMeta, Project } from './Format';
+import slug from '../pages/[slug]';
 
 const API_URL = process.env.CNTRL_API_URL;
 
@@ -25,7 +26,7 @@ export class CntrlClient {
     const data = await projectResponse.json() as Project;
     const page = data.pages.find((page) => page.slug === pageSlug);
     if (!page) {
-      throw new Error(`Page with a slug ${pageSlug} was noy found in project with id #${this.projectId}`);
+      throw new Error(`Page with a slug ${pageSlug} was not found in project with id #${this.projectId}`);
     }
 
     const articleResponse = await fetch(`${API_URL}/articles/${page.articleId}`);
