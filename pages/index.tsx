@@ -11,7 +11,7 @@ interface Props {
   page: TPage;
 }
 
-const CntrlPage: NextPage<Props> = (props) => {
+const Index: NextPage<Props> = (props) => {
   const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta);
   return (
     <Page
@@ -22,17 +22,10 @@ const CntrlPage: NextPage<Props> = (props) => {
   );
 }
 
-type ParamsWithSlug = {
-  slug: string;
-};
-
-export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ params }) => {
-  if (params?.slug === undefined) {
-    throw new Error('Slug is not defined');
-  }
+export const getStaticProps: GetStaticProps<any, any> = async () => {
   const project = await client.getProject();
-  const article = await client.getPageArticle(params.slug);
-  const page = project.pages.find(page => page.slug === params.slug);
+  const article = await client.getPageArticle('');
+  const page = project.pages.find(page => page.slug === '');
 
   return {
     props: {
@@ -43,18 +36,4 @@ export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ para
   }
 };
 
-export async function getStaticPaths() {
-  const res = await client.getProject();
-
-  const paths = res.pages
-    .filter(page => page.slug !== '')
-    .map((page) => ({
-      params: {
-        slug: page.slug
-      }
-    }));
-
-  return { paths, fallback: false };
-}
-
-export default CntrlPage;
+export default Index;
