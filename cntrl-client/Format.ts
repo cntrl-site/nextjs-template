@@ -94,6 +94,7 @@ export interface TPage {
   articleId: string;
   slug: string;
   meta: PageMeta;
+  isPublished: boolean;
 }
 
 export interface Article {

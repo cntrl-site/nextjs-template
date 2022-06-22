@@ -1,4 +1,4 @@
-import { Article, Meta, PageMeta, Project } from './Format';
+import { Article, Meta, PageMeta, Project, TPage } from './Format';
 import slug from '../pages/[slug]';
 
 const API_URL = process.env.CNTRL_API_URL;
@@ -13,9 +13,12 @@ export class CntrlClient {
     if (!response.ok) {
       throw new Error(`Failed to fetch project with id #${this.projectId}: ${response.statusText}`);
     }
-    // TODO fix this stupid typing
     const data = await response.json() as Project;
-    return data;
+    const project = {
+      ...data,
+      pages: data.pages.filter(page => page.isPublished)
+    };
+    return project;
   }
 
   async getPageArticle(pageSlug: string): Promise<Article> {
@@ -33,7 +36,6 @@ export class CntrlClient {
     if (!articleResponse.ok) {
       throw new Error(`Failed to fetch article with id #${page.articleId}: ${articleResponse.statusText}`);
     }
-    // TODO fix this stupid typing
     const articleData = await articleResponse.json() as Article;
 
     return articleData;
