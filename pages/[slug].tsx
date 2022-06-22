@@ -3,7 +3,6 @@ import { CntrlClient } from '../cntrl-client/CntrlClient';
 import { Article as TArticle, Project, TPage } from '../cntrl-client/Format';
 import Page from '../components/Page/Page';
 
-
 const client = new CntrlClient(process.env.CNTRL_PROJECT_ID!);
 
 interface Props {
