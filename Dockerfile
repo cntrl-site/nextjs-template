@@ -15,5 +15,6 @@ COPY ./styles ./styles
 COPY ./pages ./pages
 ARG CNTRL_API_URL
 ARG CNTRL_PROJECT_ID
-RUN date -u > ./build_date.txt
+# to bust cache on Digital Ocean build trigger
+ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
 RUN npm run export
