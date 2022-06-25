@@ -27,6 +27,7 @@ const Page: FC<Props> = ({ article, project, meta }) => {
         {adobeFont}
         {googleFont}
         {htmlHead}
+
       </Head>
       {afterBodyOpen}
       <Article article={article} layouts={project.layouts} />

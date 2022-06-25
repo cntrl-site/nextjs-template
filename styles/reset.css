@@ -1,4 +1,10 @@
 body, html {
     margin: 0;
     padding: 0;
+    font-family: 'AeonikProRegular', serif;
+}
+
+@font-face {
+    font-family: 'AeonikProRegular';
+    src: local('AeonikProRegular'), url(/fonts/AeonikProRegular/AeonikPro-Regular.woff2);
 }

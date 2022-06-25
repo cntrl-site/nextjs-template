@@ -1,33 +1,38 @@
 import { FC } from 'react';
 import { ItemProps } from './Item';
-import { createUseStyles } from 'react-jss';
 import { getLayoutStyles } from '../utils';
-import { ImageItem, Layout } from '../Format';
-
-interface StylesParams {
-  layouts: Layout[];
-  layoutParams: ImageItem['layoutParams'];
-}
-
-const useStyles = createUseStyles({
-  imageItem: ({ layouts, layoutParams }: StylesParams) => ({
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    ...getLayoutStyles(layouts, [layoutParams],
-      ([{ opacity, radius, strokeColor, strokeWidth }]) => ({
-        opacity: opacity,
-        borderColor: strokeColor,
-        borderRadius: `${radius * 100}vw`,
-        borderWidth: `${strokeWidth * 100}vw`
-    }))
-  })
-});
+import { ImageItem } from '../Format';
 
 const ImageItem: FC<ItemProps<ImageItem>> = ({ item, layouts }) => {
-  const styles = useStyles({ layouts, layoutParams: item.layoutParams });
   return (
-    <img src={item.commonParams.url} className={styles.imageItem} />
+    <>
+      <div className={`image-wrapper-${item.id}`}>
+        <img className="image" src={item.commonParams.url}  />
+      </div>
+      <style jsx>{`
+      ${
+        getLayoutStyles(layouts, [item.layoutParams], ([{ strokeColor, radius, strokeWidth }]) => (`
+           .image-wrapper-${item.id} {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              border-style: solid;
+              box-sizing: border-box;
+              border-color: ${strokeColor};
+              border-radius: ${radius * 100}vw;
+              border-width: ${strokeWidth * 100}vw;
+            }`
+        ))
+      }
+      .image {
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+        object-fit: cover;
+        pointer-events: none;
+      }
+      `}</style>
+    </>
   )
 }
 
