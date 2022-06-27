@@ -1,6 +1,7 @@
-import { CSSProperties, FC, ReactElement, ReactNode } from 'react';
+import { CSSProperties, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import { ItemProps } from './Item';
-import { RichTextEntity, RichTextItem, RichTextStyle } from '../Format';
+import { Layout, RichTextEntity, RichTextItem, RichTextStyle } from '../Format';
+import { getClosestLayoutValue } from '../utils';
 
 interface StyleGroup {
   start: number;
@@ -37,18 +38,20 @@ export enum VerticalAlign {
   Unset = 'unset'
 }
 
+const MAX_LAYOUT_WIDTH = 1920;
+
 class RichTextConv {
-  toHtml(richText: RichTextItem, layoutId: string): ReactElement {
+  toHtml(richText: RichTextItem, layoutId: string, layouts: Layout[]): ReactElement {
     const { text, blocks = [] } = richText.commonParams;
-    const styles = richText.layoutParams[layoutId]?.styles ?? [];
+    const { styles } = getClosestLayoutValue(richText.layoutParams, layouts, layoutId);
+
     const root: ReactElement[] = [];
     for (const block of blocks) {
       const kids: ReactNode[] = [];
       const content = text.slice(block.start, block.end);
       const entities = block.entities!.sort((a, b) => a.start - b.start) ?? [];
-      console.log(styles);
       const entitiesGroups = this.normalizeStyles(
-        styles
+        styles!
           .filter(s => s.start >= block.start && s.end <= block.end)
           .map(s => ({...s, start: s.start - block.start, end: s.end - block.start})),
         entities.sort((a, b) => a.start - b.start)
@@ -137,7 +140,7 @@ class RichTextConv {
           stylesGroup: styleGroups.filter(s => s.start >= start && s.end <= end),
           start,
           end,
-          ...(entity && {link: entity.data.url})
+          ...(entity && { link: entity.data.url })
         });
       }
     } else {
@@ -171,8 +174,28 @@ class RichTextConv {
 const richTextConv = new RichTextConv();
 
 const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
-  const content = richTextConv.toHtml(item, '01G4J1JJQ7DHTPFW0TVEM2YEWA');
-  return <div>{content}</div>
+  const sortedLayouts = layouts.slice().sort((a, b) => a.startsWith - b.startsWith);
+
+  return <>
+    {
+      sortedLayouts.map((l, i) => {
+        const next = sortedLayouts[i + 1];
+        return <>
+          <div key={l.id} className={`rich-text-${l.id}`}>{richTextConv.toHtml(item, l.id, layouts)}</div>
+          <style jsx>{`
+            .rich-text-${l.id} {
+              display: none;
+            }
+            @media (min-width: ${l.startsWith}px) and (max-width: ${next  ? next.startsWith : MAX_LAYOUT_WIDTH}px ) {
+              .rich-text-${l.id} {
+                display: block;
+              }
+            }
+          `}</style>
+        </>
+      })
+    }
+  </>
 };
 
 export default RichTextItem;

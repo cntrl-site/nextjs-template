@@ -16,7 +16,7 @@ export function getLayoutStyles<V, M> (
   return mediaQueries;
 }
 
-const getClosestLayoutValue = <V>(map: Record<string, V>, layouts: Layout[], layoutId: string): V => {
+export const getClosestLayoutValue = <V>(map: Record<string, V>, layouts: Layout[], layoutId: string): V => {
   const index = layouts.findIndex(l => l.id === layoutId);
   if (index === -1) {
     throw new Error(`No layout was found by the given id #${layoutId}`);
