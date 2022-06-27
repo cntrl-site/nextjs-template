@@ -6,4 +6,4 @@ interface Props {
 }
 
 export const LinkWrapper: React.FC<Props> = ({ url, children }) => (
-    url ? <a href={url} target="_blank" rel="noreferrer" >{children}</a> : <>{children}</>);
+    url ? <a href={url} target="_blank" rel="noreferrer">{children}</a> : <>{children}</>);
