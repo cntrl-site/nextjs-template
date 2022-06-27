@@ -38,8 +38,6 @@ export enum VerticalAlign {
   Unset = 'unset'
 }
 
-const MAX_LAYOUT_WIDTH = 1920;
-
 class RichTextConv {
   toHtml(richText: RichTextItem, layoutId: string, layouts: Layout[]): ReactElement {
     const { text, blocks = [] } = richText.commonParams;
@@ -50,12 +48,13 @@ class RichTextConv {
       const kids: ReactNode[] = [];
       const content = text.slice(block.start, block.end);
       const entities = block.entities!.sort((a, b) => a.start - b.start) ?? [];
-      const entitiesGroups = this.normalizeStyles(
+      const stylesGroup = this.normalizeStyles(
         styles!
           .filter(s => s.start >= block.start && s.end <= block.end)
           .map(s => ({...s, start: s.start - block.start, end: s.end - block.start})),
         entities.sort((a, b) => a.start - b.start)
       );
+      const entitiesGroups = this.groupEntities(entities, stylesGroup);
       let offset = 0;
 
       if(!entitiesGroups) {
@@ -96,14 +95,14 @@ class RichTextConv {
         kids.push(content.slice(offset, block.end));
       }
 
-      root.push(<div>{kids}</div>);
+      const textAlign = richText.layoutParams[layoutId]?.textAlign;
+      root.push(<div style={{textAlign: textAlign}}>{kids}</div>);
     }
     return <>{root}</>;
   }
 
-  private normalizeStyles(styles: RichTextStyle[], entities: RichTextEntity[]): EntitiesGroup[] | undefined {
+  private normalizeStyles(styles: RichTextStyle[], entities: RichTextEntity[]): StyleGroup[] | undefined {
     const styleGroups: StyleGroup[] = [];
-    const entitiesGroups: EntitiesGroup[] = [];
     const dividers = [...styles, ...entities].reduce((ds, s) => {
       ds.add(s.start);
       ds.add(s.end);
@@ -123,6 +122,12 @@ class RichTextConv {
       })
     }
 
+    return styleGroups;
+  }
+
+  private groupEntities(entities: RichTextEntity[], styleGroups?: StyleGroup[]): EntitiesGroup[] | undefined {
+    const entitiesGroups: EntitiesGroup[] = [];
+    if (!styleGroups) return;
     if (entities.length) {
       const start = entities[0].start < styleGroups[0].start ? entities[0].start : styleGroups[0].start;
       const end = entities[entities.length - 1].end > styleGroups[styleGroups.length - 1].end ? entities[entities.length - 1].end : styleGroups[styleGroups.length - 1].end;
@@ -149,7 +154,6 @@ class RichTextConv {
 
     return entitiesGroups;
   }
-
 
   private static fromDraftToInline (draftStyle: DraftStyle) {
     const { value, name } = draftStyle;
@@ -187,7 +191,7 @@ const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
               .rich-text-${l.id} {
                 display: none;
               }
-              @media (min-width: ${l.startsWith}px) and (max-width: ${next  ? next.startsWith : MAX_LAYOUT_WIDTH}px ) {
+              @media (min-width: ${l.startsWith}px) and (max-width: ${next  ? next.startsWith : Number.MAX_SAFE_INTEGER}px ) {
                 .rich-text-${l.id} {
                   display: block;
                 }

@@ -212,6 +212,7 @@ export interface RichTextItem extends ItemBase {
   layoutParams: Record<LayoutId, {
     styles?: RichTextStyle[];
     opacity: number;
+    textAlign: TextAlign;
   }>
 }
 
