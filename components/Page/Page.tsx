@@ -28,7 +28,6 @@ const Page: FC<Props> = ({ article, project, meta }) => {
         <meta name="keywords" content={meta.keywords} />
         <meta property="og:url" content={meta.opengraphThumbnail} />
         <link rel="icon" href={meta.favicon} />
-        {/*{project.fonts.google}*/}
         {project.fonts.adobe}
         {Object.values(parsedFonts as ReturnType<typeof domToReact>).map((value, i) => {
           if (!value) return undefined;
