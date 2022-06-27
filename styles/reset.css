@@ -7,8 +7,3 @@ body, html {
 a {
     text-decoration: none;
 }
-
-@font-face {
-    font-family: 'AeonikProRegular';
-    src: local('AeonikProRegular'), url(/fonts/AeonikProRegular/AeonikPro-Regular.woff2);
-}
