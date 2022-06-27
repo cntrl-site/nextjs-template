@@ -1,15 +1,11 @@
 import { FC } from 'react';
-import { Layout, RectangleItem } from '../Format';
+import { RectangleItem } from '../Format';
 import { getLayoutStyles } from '../utils';
 import { ItemProps } from './Item';
+import { LinkWrapper } from './LinkWrapper';
 
-interface StylesParams {
-  layouts: Layout[];
-  layoutParams: RectangleItem['layoutParams'];
-}
-
-const RectangleItem: FC<ItemProps<RectangleItem>> = ({ item, layouts }) => {
-  return (
+const RectangleItem: FC<ItemProps<RectangleItem>> = ({ item, layouts }) => (
+  <LinkWrapper url={item.link?.url}>
     <>
       <div className={`rectangle-${item.id}`} />
       <style jsx>{`
@@ -30,7 +26,8 @@ const RectangleItem: FC<ItemProps<RectangleItem>> = ({ item, layouts }) => {
       }
       `}</style>
     </>
-  );
-};
+  </LinkWrapper>
+);
+
 
 export default RectangleItem;

@@ -44,8 +44,8 @@ class RichTextConv {
   toHtml(richText: RichTextItem, layoutId: string, layouts: Layout[]): ReactElement {
     const { text, blocks = [] } = richText.commonParams;
     const { styles } = getClosestLayoutValue(richText.layoutParams, layouts, layoutId);
-
     const root: ReactElement[] = [];
+
     for (const block of blocks) {
       const kids: ReactNode[] = [];
       const content = text.slice(block.start, block.end);
@@ -176,26 +176,28 @@ const richTextConv = new RichTextConv();
 const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
   const sortedLayouts = layouts.slice().sort((a, b) => a.startsWith - b.startsWith);
 
-  return <>
-    {
-      sortedLayouts.map((l, i) => {
-        const next = sortedLayouts[i + 1];
-        return <>
-          <div key={l.id} className={`rich-text-${l.id}`}>{richTextConv.toHtml(item, l.id, layouts)}</div>
-          <style jsx>{`
-            .rich-text-${l.id} {
-              display: none;
-            }
-            @media (min-width: ${l.startsWith}px) and (max-width: ${next  ? next.startsWith : MAX_LAYOUT_WIDTH}px ) {
+  return (
+    <>
+      {
+        sortedLayouts.map((l, i) => {
+          const next = sortedLayouts[i + 1];
+          return <>
+            <div key={l.id} className={`rich-text-${l.id}`}>{richTextConv.toHtml(item, l.id, layouts)}</div>
+            <style jsx>{`
               .rich-text-${l.id} {
-                display: block;
+                display: none;
               }
-            }
-          `}</style>
-        </>
-      })
-    }
-  </>
+              @media (min-width: ${l.startsWith}px) and (max-width: ${next  ? next.startsWith : MAX_LAYOUT_WIDTH}px ) {
+                .rich-text-${l.id} {
+                  display: block;
+                }
+              }
+            `}</style>
+          </>
+        })
+      }
+    </>
+  );
 };
 
 export default RichTextItem;

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import HTMLReactParser from 'html-react-parser';
+import HTMLReactParser, { domToReact } from 'html-react-parser';
 import Head from 'next/head';
 import { Article as TArticle, Meta, Project } from '../../cntrl-client/Format';
 import Article from '../../cntrl-client/components/Article';
@@ -11,8 +11,12 @@ interface Props {
 }
 
 const Page: FC<Props> = ({ article, project, meta }) => {
-  const adobeFont = HTMLReactParser(project.fonts.adobe);
-  const googleFont = HTMLReactParser(project.fonts.google);
+  const googleFonts: ReturnType<typeof domToReact> = HTMLReactParser(project.fonts.google);
+  const adobeFonts: ReturnType<typeof domToReact> = HTMLReactParser(project.fonts.adobe);
+  const parsedFonts = {
+    ...(typeof googleFonts === 'object' ? googleFonts : {}),
+    ...(typeof adobeFonts === 'object' ? adobeFonts : {})
+  };
   const htmlHead = HTMLReactParser(project.html.head);
   const afterBodyOpen = HTMLReactParser(project.html.afterBodyOpen);
   const beforeBodyClose = HTMLReactParser(project.html.beforeBodyClose);
@@ -24,8 +28,17 @@ const Page: FC<Props> = ({ article, project, meta }) => {
         <meta name="keywords" content={meta.keywords} />
         <meta property="og:url" content={meta.opengraphThumbnail} />
         <link rel="icon" href={meta.favicon} />
-        {adobeFont}
-        {googleFont}
+        {/*{project.fonts.google}*/}
+        {project.fonts.adobe}
+        {Object.values(parsedFonts as ReturnType<typeof domToReact>).map((value, i) => {
+          if (!value) return undefined;
+          const rel = value.props?.rel;
+          const href = value.props?.href;
+          if (!rel || !href) return undefined;
+          return (
+            <link key={i} rel={rel} href={href} />
+          );
+        })}
         {htmlHead}
 
       </Head>

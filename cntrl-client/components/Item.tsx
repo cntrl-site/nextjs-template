@@ -36,12 +36,12 @@ const Item: FC<ItemProps<Item>> = ({ item, layouts }) => {
   }
 
   const ItemComponent = itemsMap[item.type] || noop;
+
   return (
     <div className={`item-${item.id}`}>
       <ItemComponent item={item} layouts={layouts} />
       <style jsx>{`
-        ${
-         getLayoutStyles(layouts, layoutValues, ([area, layoutParams]) => (`
+        ${getLayoutStyles(layouts, layoutValues, ([area, layoutParams]) => (`
            .item-${item.id} {
               position: absolute;
               top: ${area.top * 100}vw;
@@ -50,9 +50,8 @@ const Item: FC<ItemProps<Item>> = ({ item, layouts }) => {
               height: ${area.height * 100}vw;
               z-index: ${area.zIndex};
               transform: rotate(${area.angle}deg);
-            }`
-         ))
-        }
+            }
+        `))}
       `}</style>
     </div>
   );
