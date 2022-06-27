@@ -42,6 +42,17 @@ export enum TextAlign {
   Justify = 'justify'
 }
 
+export enum TextTransform {
+  None = 'none',
+  Uppercase = 'uppercase',
+  Lowercase = 'lowercase'
+}
+export enum VerticalAlign {
+  Super = 'super',
+  Sub = 'sub',
+  Unset = 'unset'
+}
+
 export interface RichTextStyle {
   start: number;
   end: number;

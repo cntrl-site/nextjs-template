@@ -1,6 +1,6 @@
 import { CSSProperties, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import { ItemProps } from './Item';
-import { Layout, RichTextEntity, RichTextItem, RichTextStyle } from '../Format';
+import { Layout, RichTextEntity, RichTextItem, RichTextStyle, TextTransform, VerticalAlign } from '../Format';
 import { getClosestLayoutValue } from '../utils';
 
 interface StyleGroup {
@@ -26,17 +26,6 @@ export const FontStyles: Record<string, CSSProperties> = {
   'bold': { fontWeight: 'bold' },
   'italic': { fontStyle: 'italic' }
 };
-
-export enum TextTransform {
-  None = 'none',
-  Uppercase = 'uppercase',
-  Lowercase = 'lowercase'
-}
-export enum VerticalAlign {
-  Super = 'super',
-  Sub = 'sub',
-  Unset = 'unset'
-}
 
 class RichTextConv {
   toHtml(richText: RichTextItem, layoutId: string, layouts: Layout[]): ReactElement {
