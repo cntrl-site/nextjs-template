@@ -9,9 +9,9 @@ export function getLayoutStyles<V, M> (
     return `
       ${acc}
       ${layout.startsWith !== 0
-      ? `@media (min-width: ${layout.startsWith}px) {${mapToStyles(values)}}`
-      : `${mapToStyles(values)}`
-    }`;
+        ? `@media (min-width: ${layout.startsWith}px) {${mapToStyles(values)}}`
+        : `${mapToStyles(values)}`
+      }`;
   }, '');
   return mediaQueries;
 }
