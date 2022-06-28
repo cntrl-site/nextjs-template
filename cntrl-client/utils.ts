@@ -1,24 +1,22 @@
 import { Layout } from './Format';
-import { CSSProperties } from 'react';
 
-export function getLayoutStyles<V, M extends object> (
+export function getLayoutStyles<V, M> (
   layouts: Layout[],
   layoutValues: Record<string, V>[],
-  mapToStyles: (values: V[]) => M): Record<string, any> {
-  const mediaQueries = layouts.reduce((acc, layout) => {
+  mapToStyles: (values: V[]) => M): string {
+  const mediaQueries = layouts.sort((a, b) => a.startsWith - b.startsWith).reduce((acc, layout) => {
     const values = layoutValues.map(lv => lv[layout.id] ?? getClosestLayoutValue(lv, layouts, layout.id));
-    return {
-      ...acc,
-      [`@media (min-width: ${layout.startsWith}px)`]: {
-        ...mapToStyles(values)
-      }
-    };
-  }, {});
-
+    return `
+      ${acc}
+      ${layout.startsWith !== 0
+        ? `@media (min-width: ${layout.startsWith}px) {${mapToStyles(values)}}`
+        : `${mapToStyles(values)}`
+      }`;
+  }, '');
   return mediaQueries;
 }
 
-const getClosestLayoutValue = <V>(map: Record<string, V>, layouts: Layout[], layoutId: string): V => {
+export const getClosestLayoutValue = <V>(map: Record<string, V>, layouts: Layout[], layoutId: string): V => {
   const index = layouts.findIndex(l => l.id === layoutId);
   if (index === -1) {
     throw new Error(`No layout was found by the given id #${layoutId}`);

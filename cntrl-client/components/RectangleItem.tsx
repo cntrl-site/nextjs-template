@@ -1,37 +1,31 @@
 import { FC } from 'react';
-import { Layout, RectangleItem } from '../Format';
-import { createUseStyles } from 'react-jss';
+import { RectangleItem } from '../Format';
 import { getLayoutStyles } from '../utils';
 import { ItemProps } from './Item';
+import { LinkWrapper } from './LinkWrapper';
 
-interface StylesParams {
-  layouts: Layout[];
-  layoutParams: RectangleItem['layoutParams'];
-}
+const RectangleItem: FC<ItemProps<RectangleItem>> = ({ item, layouts }) => (
+  <LinkWrapper url={item.link?.url}>
+    <>
+      <div className={`rectangle-${item.id}`} />
+      <style jsx>{`
+      ${getLayoutStyles(layouts, [item.layoutParams], ([{ strokeColor, fillColor, radius, strokeWidth }]) => (`
+         .rectangle-${item.id} {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-style: solid;
+            box-sizing: border-box;
+            border-color: ${strokeColor};
+            background-color: ${fillColor};
+            border-radius: ${radius * 100}vw;
+            border-width: ${strokeWidth * 100}vw;
+          }`
+        ))}
+      `}</style>
+    </>
+  </LinkWrapper>
+);
 
-const useStyles = createUseStyles({
-  rectangleItem: ({ layouts, layoutParams }: StylesParams) => ({
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderStyle: 'solid',
-    boxSizing: 'border-box',
-    ...getLayoutStyles(layouts, [layoutParams],
-      ([{ opacity, strokeColor, fillColor, radius, strokeWidth }]) => ({
-        opacity: opacity,
-        borderColor: strokeColor,
-        backgroundColor: fillColor,
-        borderRadius: `${radius * 100}vw`,
-        borderWidth: `${strokeWidth * 100}vw`
-    }))
-  })
-});
-
-const RectangleItem: FC<ItemProps<RectangleItem>> = ({ item, layouts }) => {
-  const styles = useStyles({ layouts, layoutParams: item.layoutParams });
-  return (
-    <div className={styles.rectangleItem} />
-  );
-};
 
 export default RectangleItem;

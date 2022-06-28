@@ -1,10 +1,10 @@
 import { ComponentType, FC } from 'react';
 import { ArticleItemType, Item, Layout } from '../Format';
 import RectangleItem from './RectangleItem';
-import { createUseStyles } from 'react-jss';
 import { getLayoutStyles } from '../utils';
 import ImageItem from './ImageItem';
 import VideoItem from './VideoItem';
+import RichTextItem from './RichTextItem';
 
 export interface ItemProps<I extends Item> {
   layouts: Layout[];
@@ -23,38 +23,36 @@ const itemsMap: Record<ArticleItemType, ComponentType<ItemProps<any>>> = {
   [ArticleItemType.Video]: VideoItem,
   [ArticleItemType.Custom]: () => null,
   [ArticleItemType.Embed]: () => null,
-  [ArticleItemType.RichText]: () => null,
+  [ArticleItemType.RichText]: RichTextItem,
   [ArticleItemType.Text]: () => null
 };
-
-const useStyles = createUseStyles({
-  item: ({ area, layoutParams, layouts }: StyleParams) => {
-    const layoutValues: Record<string, any>[] = [area];
-    if (layoutParams) {
-      layoutValues.push(layoutParams);
-    }
-    return {
-      position: 'absolute',
-      ...getLayoutStyles(layouts, layoutValues, ([area, layoutParams]) => ({
-        top: `${area.top * 100}vw`,
-        left: layoutParams?.fullwidth ? 0 : `${area.left * 100}vw`,
-        width: layoutParams?.fullwidth ? '100vw' : `${area.width * 100}vw`,
-        height: `${area.height * 100}vw`,
-        zIndex: area.zIndex,
-        transform: `rotate(${area.angle}deg)`
-      }))
-    };
-  }
-});
 
 const noop = () => null;
 
 const Item: FC<ItemProps<Item>> = ({ item, layouts }) => {
-  const styles = useStyles({ area: item.area, layouts, layoutParams: item.layoutParams });
+  const layoutValues: Record<string, any>[] = [item.area];
+  if (item.layoutParams) {
+    layoutValues.push(item.layoutParams);
+  }
+
   const ItemComponent = itemsMap[item.type] || noop;
+
   return (
-    <div className={styles.item}>
+    <div className={`item-${item.id}`}>
       <ItemComponent item={item} layouts={layouts} />
+      <style jsx>{`
+        ${getLayoutStyles(layouts, layoutValues, ([area, layoutParams]) => (`
+           .item-${item.id} {
+              position: absolute;
+              top: ${area.top * 100}vw;
+              left: ${layoutParams?.fullwidth ? 0 : area.left * 100}vw;
+              width: ${layoutParams?.fullwidth ? '100vw' : area.width * 100}vw;
+              height: ${area.height * 100}vw;
+              z-index: ${area.zIndex};
+              transform: rotate(${area.angle}deg);
+            }
+        `))}
+      `}</style>
     </div>
   );
 };

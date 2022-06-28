@@ -1,5 +1,4 @@
 import { FC, ReactElement } from 'react';
-import { createUseStyles } from 'react-jss';
 import { Layout, Section as TSection } from '../Format';
 import { getLayoutStyles } from '../utils';
 
@@ -11,27 +10,22 @@ interface Props {
   children: SectionChild[];
 }
 
-interface StyleParams {
-  layouts: Layout[];
-  height: TSection['height'];
-}
-
-const useStyles = createUseStyles({
-  section: ({ height, layouts }: StyleParams) => ({
-    position: 'relative',
-    ...getLayoutStyles(layouts, [height], ([height]) => ({
-      height: `${height * 100}vw`
-    }))
-  })
-});
-
-const Section: FC<Props> = ({ section, layouts, children }) => {
-  const styles = useStyles({ height: section.height, layouts });
-  return (
-    <div className={styles.section}>
+const Section: FC<Props> = ({ section, layouts, children }) => (
+  <>
+    <div className={`section-${section.id}`}>
       {children}
     </div>
-  );
-};
+    <style jsx>{`
+      ${
+      getLayoutStyles(layouts, [section.height], ([height]) => (`
+         .section-${section.id} {
+            height: ${height * 100}vw;
+          }`
+      ))
+    }
+    `}</style>
+  </>
+);
+
 
 export default Section;
