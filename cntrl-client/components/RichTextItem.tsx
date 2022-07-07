@@ -14,19 +14,21 @@ const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
       {
         sortedLayouts.map((l, i) => {
           const next = sortedLayouts[i + 1];
-          return <>
-            <div key={l.id} className={`rich-text-${l.id}`}>{richTextConv.toHtml(item, l.id, layouts)}</div>
-            <style jsx>{`
-              .rich-text-${l.id} {
-                display: none;
-              }
-              @media (min-width: ${l.startsWith}px) and (max-width: ${next ? next.startsWith : Number.MAX_SAFE_INTEGER}px ) {
+          return (
+            <>
+              <div key={l.id} className={`rich-text-${l.id}`}>{richTextConv.toHtml(item, l.id, layouts)}</div>
+              <style key={`style-${l.id}`} jsx>{`
                 .rich-text-${l.id} {
-                  display: block;
+                  display: none;
                 }
-              }
-            `}</style>
-          </>
+                @media (min-width: ${l.startsWith}px) and (max-width: ${next ? next.startsWith : Number.MAX_SAFE_INTEGER}px ) {
+                  .rich-text-${l.id} {
+                    display: block;
+                  }
+                }
+              `}</style>
+            </>
+          );
         })
       }
     </>
