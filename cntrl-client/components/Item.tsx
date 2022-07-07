@@ -41,8 +41,8 @@ const Item: FC<ItemProps<Item>> = ({ item, layouts }) => {
               position: absolute;
               top: ${area.top * 100}vw;
               left: ${layoutParams?.fullwidth ? 0 : area.left * 100}vw;
-              width: ${layoutParams?.fullwidth ? '100vw': sizingAxis.x === SizingTypes.Manual ? area.width * 100 + 'vw' : 'auto'};
-              height: ${sizingAxis.y === SizingTypes.Manual ? area.height * 100 + 'vw' : 'auto'};
+              width: ${layoutParams?.fullwidth ? '100vw' : sizingAxis.x === SizingTypes.Manual ? `${area.width * 100}vw` : 'auto'};
+              height: ${sizingAxis.y === SizingTypes.Manual ? `${area.height * 100}vw` : 'auto'};
               z-index: ${area.zIndex};
               transform: rotate(${area.angle}deg);
             }
