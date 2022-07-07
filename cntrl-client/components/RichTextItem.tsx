@@ -23,6 +23,7 @@ const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
               @media (min-width: ${l.startsWith}px) and (max-width: ${next ? next.startsWith : Number.MAX_SAFE_INTEGER}px ) {
                 .rich-text-${l.id} {
                   display: block;
+                  word-break: break-word;
                 }
               }
             `}</style>

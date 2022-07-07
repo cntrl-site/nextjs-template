@@ -1,7 +1,7 @@
 import { ComponentType, FC } from 'react';
 import { ArticleItemType, Item, Layout } from '../Format';
 import RectangleItem from './RectangleItem';
-import { getLayoutStyles } from '../utils';
+import { getLayoutStyles, parseSizing, SizingTypes } from '../utils';
 import ImageItem from './ImageItem';
 import VideoItem from './VideoItem';
 import RichTextItem from './RichTextItem';
@@ -9,12 +9,6 @@ import RichTextItem from './RichTextItem';
 export interface ItemProps<I extends Item> {
   layouts: Layout[];
   item: I;
-}
-
-interface StyleParams {
-  area: Item['area'];
-  layouts: Layout[];
-  layoutParams?: Item['layoutParams'];
 }
 
 const itemsMap: Record<ArticleItemType, ComponentType<ItemProps<any>>> = {
@@ -35,6 +29,7 @@ const Item: FC<ItemProps<Item>> = ({ item, layouts }) => {
     layoutValues.push(item.layoutParams);
   }
 
+  const sizingAxis = parseSizing(item.commonParams.sizing);
   const ItemComponent = itemsMap[item.type] || noop;
 
   return (
@@ -46,8 +41,8 @@ const Item: FC<ItemProps<Item>> = ({ item, layouts }) => {
               position: absolute;
               top: ${area.top * 100}vw;
               left: ${layoutParams?.fullwidth ? 0 : area.left * 100}vw;
-              width: ${layoutParams?.fullwidth ? '100vw' : area.width * 100}vw;
-              height: ${area.height * 100}vw;
+              width: ${layoutParams?.fullwidth ? '100vw': sizingAxis.x === SizingTypes.Manual ? area.width * 100 + 'vw' : 'auto'};
+              height: ${sizingAxis.y === SizingTypes.Manual ? area.height * 100 + 'vw' : 'auto'};
               z-index: ${area.zIndex};
               transform: rotate(${area.angle}deg);
             }
