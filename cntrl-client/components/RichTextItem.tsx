@@ -8,7 +8,6 @@ const richTextConv = new RichTextConv();
 const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
   const sortedLayouts = layouts.slice().sort((a, b) => a.startsWith - b.startsWith);
   const styles = sortedLayouts.map((l, i) => {
-    console.log(l);
     const next = sortedLayouts[i + 1];
     return (
       `
