@@ -17,6 +17,7 @@ const Page: FC<Props> = ({ article, project, meta }) => {
     ...(typeof googleFonts === 'object' ? googleFonts : {}),
     ...(typeof adobeFonts === 'object' ? adobeFonts : {})
   };
+  const customFonts = project.fonts.custom;
   const htmlHead = HTMLReactParser(project.html.head);
   const afterBodyOpen = HTMLReactParser(project.html.afterBodyOpen);
   const beforeBodyClose = HTMLReactParser(project.html.beforeBodyClose);
@@ -28,6 +29,21 @@ const Page: FC<Props> = ({ article, project, meta }) => {
         <meta name="keywords" content={meta.keywords} />
         <meta property="og:url" content={meta.opengraphThumbnail} />
         <link rel="icon" href={meta.favicon} />
+        {customFonts.length > 0 && (
+          <style
+            dangerouslySetInnerHTML={{
+              __html: customFonts.map((font) => (
+                `
+                @font-face {
+                  font-family: ${font.name};
+                  font-weight: ${font.weight};
+                  src: ${font.files.map(file => `url('${file.url}') format('${file.type}')`).join(', ')};
+                }
+              `
+              )).join('\n')
+            }}
+          />
+        )}
         {project.fonts.adobe}
         {Object.values(parsedFonts as ReturnType<typeof domToReact>).map((value, i) => {
           if (!value) return undefined;

@@ -32,7 +32,8 @@ export class RichTextConv {
     const { styles } = getClosestLayoutValue(richText.layoutParams, layouts, layoutId);
     const root: ReactElement[] = [];
 
-    for (const block of blocks) {
+    for (let blockIndex = 0; blockIndex < blocks.length; blockIndex++) {
+      const block = blocks[blockIndex];
       const kids: ReactNode[] = [];
       const content = text.slice(block.start, block.end);
       const entities = block.entities!.sort((a, b) => a.start - b.start) ?? [];
@@ -46,7 +47,7 @@ export class RichTextConv {
       let offset = 0;
 
       if (!entitiesGroups) {
-        root.push(<div>{content}</div>);
+        root.push(<div key={`rootContent-${blockIndex}`}>{content}</div>);
         continue;
       }
 
@@ -58,7 +59,8 @@ export class RichTextConv {
           kids.push(content.slice(offset, entity.start));
         }
 
-        for (const style of entity.stylesGroup) {
+        for (let stylesIndex = 0; stylesIndex < entity.stylesGroup.length; stylesIndex++) {
+          const style = entity.stylesGroup[stylesIndex];
           if (offset < style.start) {
             stylesBlocks.push(content.slice(offset, style.start));
           }
@@ -67,7 +69,14 @@ export class RichTextConv {
             const styles = RichTextConv.fromDraftToInline(s);
             return { ...acc, ...styles }
           }, {});
-          stylesBlocks.push(<span style={inlineStyles}>{content.slice(style.start, style.end)}</span>);
+          stylesBlocks.push(
+            <span
+              key={stylesIndex}
+              style={inlineStyles}
+            >
+              {content.slice(style.start, style.end)}
+            </span>
+          );
           offset = style.end;
         }
 
@@ -75,7 +84,7 @@ export class RichTextConv {
           stylesBlocks.push(content.slice(offset, entity.end));
         }
 
-        const stylesContent = link ? <a target="_blank" href={link} rel="noreferrer">{stylesBlocks}</a> : <>{stylesBlocks}</>;
+        const stylesContent = link ? <a target="_blank" href={link} rel="noreferrer">{stylesBlocks}</a> : stylesBlocks;
         kids.push(stylesContent);
       }
 
@@ -84,7 +93,7 @@ export class RichTextConv {
       }
 
       const textAlign = richText.layoutParams[layoutId]?.textAlign;
-      root.push(<div style={{textAlign: textAlign}}>{kids}</div>);
+      root.push(<div key={`rootContent-${blockIndex}`} style={{textAlign: textAlign}}>{kids}</div>);
     }
     return <>{root}</>;
   }
@@ -125,6 +134,7 @@ export class RichTextConv {
         return ds;
       }, new Set<number>([start, end]));
       const entityDividers = Array.from(entitiesDividers).sort((a, b) => a - b);
+
       for (let i = 0; i < entityDividers.length - 1; i += 1) {
         const start = entityDividers[i];
         const end = entityDividers[i + 1];
@@ -137,7 +147,11 @@ export class RichTextConv {
         });
       }
     } else {
-      entitiesGroups.push({ stylesGroup: styleGroups, start: styleGroups[0].start, end: styleGroups[styleGroups.length - 1].end })
+      entitiesGroups.push({
+        stylesGroup: styleGroups,
+        start: styleGroups[0].start,
+        end: styleGroups[styleGroups.length - 1].end
+      });
     }
 
     return entitiesGroups;
