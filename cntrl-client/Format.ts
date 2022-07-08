@@ -172,6 +172,7 @@ export interface ImageItem extends ItemBase {
   type: ArticleItemType.Image;
   commonParams: {
     url: string;
+    sizing: string;
   };
   layoutParams: Record<
     LayoutId,
@@ -190,6 +191,7 @@ export interface VideoItem extends ItemBase {
   type: ArticleItemType.Video;
   commonParams: {
     url: string;
+    sizing: string;
   };
   layoutParams: Record<
     LayoutId,
@@ -209,6 +211,7 @@ export interface VideoItem extends ItemBase {
 export interface TextItem extends ItemBase {
   type: ArticleItemType.Text;
   commonParams: {
+    sizing: string;
     content: string;
     fontFamily: string;
     fontStyle: string;
@@ -230,6 +233,7 @@ export interface TextItem extends ItemBase {
 export interface RichTextItem extends ItemBase {
   type: ArticleItemType.RichText,
   commonParams: {
+    sizing: string;
     text: string;
     blocks?: RichTextBlock[];
     styles?: RichTextStyle[];
@@ -243,6 +247,9 @@ export interface RichTextItem extends ItemBase {
 
 export interface RectangleItem extends ItemBase {
   type: ArticleItemType.Rectangle;
+  commonParams: {
+    sizing: string;
+  },
   layoutParams: Record<
     LayoutId,
     {
@@ -261,6 +268,7 @@ export interface EmbedItem extends ItemBase {
   type: ArticleItemType.Embed;
   commonParams: {
     content: string;
+    sizing: string;
   };
 }
 

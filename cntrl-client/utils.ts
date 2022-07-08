@@ -1,5 +1,15 @@
 import { Layout } from './Format';
 
+export enum SizingTypes {
+  Auto = 'auto',
+  Manual = 'manual',
+}
+
+interface Axis {
+  x: SizingTypes;
+  y: SizingTypes;
+}
+
 export function getLayoutStyles<V, M> (
   layouts: Layout[],
   layoutValues: Record<string, V>[],
@@ -32,3 +42,12 @@ export const getClosestLayoutValue = <V>(map: Record<string, V>, layouts: Layout
   }
   return map[found.id];
 }
+
+export const parseSizing = (sizing: string): Axis => {
+  const axisSizing = sizing.split(' ');
+  return {
+    y: axisSizing[0],
+    x: axisSizing[1] ? axisSizing[1] : axisSizing[0]
+  } as Axis;
+};
+
