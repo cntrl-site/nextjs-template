@@ -3,7 +3,6 @@ import { ItemProps } from './Item';
 import { RichTextItem } from '../Format';
 import { RichTextConv } from '../RichTextConv';
 
-
 const richTextConv = new RichTextConv();
 
 const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
