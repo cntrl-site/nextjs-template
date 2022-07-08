@@ -29,24 +29,21 @@ const Page: FC<Props> = ({ article, project, meta }) => {
         <meta name="keywords" content={meta.keywords} />
         <meta property="og:url" content={meta.opengraphThumbnail} />
         <link rel="icon" href={meta.favicon} />
-        {customFonts.map((font, i) => {
-          const srcs = font.files.map(file => `src: url("${file.url}") format("${file.type}");`);
-          return (
-            <style
-              key={i}
-              dangerouslySetInnerHTML={{
-                __html: `
-                  @font-face {
-                    font-family: ${font.name};
-                    font-weight: ${font.weight};
-                    ${srcs.join('\n')}
-                  }
+        {customFonts.length > 0 && (
+          <style
+            dangerouslySetInnerHTML={{
+              __html: customFonts.map((font) => (
                 `
-              }}
-            >
-            </style>
-          );
-        })}
+                @font-face {
+                  font-family: ${font.name};
+                  font-weight: ${font.weight};
+                  src: ${font.files.map(file => `url('${file.url}') format('${file.type}')`).join(', ')};
+                }
+              `
+              )).join('\n')
+            }}
+          />
+        )}
         {project.fonts.adobe}
         {Object.values(parsedFonts as ReturnType<typeof domToReact>).map((value, i) => {
           if (!value) return undefined;
