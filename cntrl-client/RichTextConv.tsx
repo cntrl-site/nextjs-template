@@ -46,6 +46,11 @@ export class RichTextConv {
       const entitiesGroups = this.groupEntities(entities, stylesGroup);
       let offset = 0;
 
+      if (block.start === block.end) {
+        root.push(<div><br /></div>);
+        continue;
+      }
+
       if (!entitiesGroups) {
         root.push(<div key={`rootContent-${blockIndex}`}>{content}</div>);
         continue;

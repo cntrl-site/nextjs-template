@@ -19,6 +19,7 @@ const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
             .rich-text-${l.id} {
               display: block;
               word-break: break-word;
+              white-space: pre-wrap;
             }
           }
         `
