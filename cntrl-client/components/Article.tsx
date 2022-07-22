@@ -10,7 +10,13 @@ interface Props {
 
 const Article: FC<Props> = ({ article, layouts }) => {
   return (
-    <>
+    <div className={'article'}>
+      <style jsx>{`
+        .article {
+          position: relative;
+          overflow-x: hidden;
+        }
+      `}</style>
       {article.sections.map((section, i) => (
         <Section section={section} key={section.id} layouts={layouts}>
           {article.sections[i].items.map(item => (
@@ -18,7 +24,7 @@ const Article: FC<Props> = ({ article, layouts }) => {
           ))}
         </Section>
       ))}
-    </>
+    </div>
   );
 };
 
