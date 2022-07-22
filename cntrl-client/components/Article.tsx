@@ -10,21 +10,23 @@ interface Props {
 
 const Article: FC<Props> = ({ article, layouts }) => {
   return (
-    <div className={'article'}>
+    <>
+      <div className={'article'}>
+        {article.sections.map((section, i) => (
+          <Section section={section} key={section.id} layouts={layouts}>
+            {article.sections[i].items.map(item => (
+              <Item layouts={layouts} item={item} key={item.id} />
+            ))}
+          </Section>
+        ))}
+      </div>
       <style jsx>{`
-        .article {
-          position: relative;
-          overflow-x: hidden;
-        }
+          .article {
+            position: relative;
+            overflow-x: hidden;
+          }
       `}</style>
-      {article.sections.map((section, i) => (
-        <Section section={section} key={section.id} layouts={layouts}>
-          {article.sections[i].items.map(item => (
-            <Item layouts={layouts} item={item} key={item.id} />
-          ))}
-        </Section>
-      ))}
-    </div>
+    </>
   );
 };
 
