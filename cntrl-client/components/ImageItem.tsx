@@ -11,7 +11,7 @@ const ImageItem: FC<ItemProps<ImageItem>> = ({ item, layouts }) => (
         <img className="image" src={item.commonParams.url} />
       </div>
       <style jsx>{`
-        ${getLayoutStyles(layouts, [item.layoutParams], ([{ strokeColor, radius, strokeWidth }]) => (`
+        ${getLayoutStyles(layouts, [item.layoutParams], ([{ strokeColor, radius, strokeWidth, opacity }]) => (`
            .image-wrapper-${item.id} {
               position: absolute;
               width: 100%;
@@ -20,6 +20,7 @@ const ImageItem: FC<ItemProps<ImageItem>> = ({ item, layouts }) => (
               box-sizing: border-box;
               border-color: ${strokeColor};
               border-radius: ${radius * 100}vw;
+              opacity: ${opacity};
               border-width: ${strokeWidth * 100}vw;
             }`
           ))

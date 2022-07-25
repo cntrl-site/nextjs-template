@@ -13,7 +13,7 @@ const VideoItem: FC<ItemProps<VideoItem>> = ({ item, layouts }) => (
         </video>
       </div>
       <style jsx>{`
-        ${getLayoutStyles(layouts, [item.layoutParams], ([{ strokeColor, radius, strokeWidth }]) => (`
+        ${getLayoutStyles(layouts, [item.layoutParams], ([{ strokeColor, radius, strokeWidth, opacity }]) => (`
            .video-wrapper-${item.id} {
               position: absolute;
               width: 100%;
@@ -23,6 +23,7 @@ const VideoItem: FC<ItemProps<VideoItem>> = ({ item, layouts }) => (
               border-color: ${strokeColor};
               border-radius: ${radius * 100}vw;
               border-width: ${strokeWidth * 100}vw;
+              opacity: ${opacity};
             }`
           ))
         }
