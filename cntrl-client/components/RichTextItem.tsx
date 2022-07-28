@@ -9,7 +9,6 @@ const richTextConv = new RichTextConv();
 
 const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
   const [content, styles] = richTextConv.toHtml(item, layouts);
-  console.log(styles);
   return (
     <>
       <div className="rich-text">{content}</div>
