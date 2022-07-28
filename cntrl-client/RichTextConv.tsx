@@ -30,7 +30,7 @@ export class RichTextConv {
   toHtml(
     richText: RichTextItem,
     layouts: Layout[]
-  ): ReactElement {
+  ): [ReactNode[], string] {
     const { text, blocks = [] } = richText.commonParams;
     const root: ReactElement[] = [];
     const styleRules = layouts.reduce<Record<string, string[]>>((rec, layout) => {
@@ -118,8 +118,11 @@ export class RichTextConv {
       ${getLayoutMediaQuery(l.id, layouts)} {
         ${styleRules[l.id].join('\n')}
       }
-    `);
-    return <>{root}<style>{styles}</style></>;
+    `).join('\n');
+    return [
+      root,
+      styles
+    ];
   }
 
   private serializeRanges(ranges: { start: number; end: number; }[]): string {
