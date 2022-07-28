@@ -26,6 +26,20 @@ export function getLayoutStyles<V, M> (
   return mediaQueries;
 }
 
+export function getLayoutMediaQuery(layoutId: string, layouts: Layout[]): string {
+  const sorted = layouts.slice().sort((a, b) => a.startsWith - b.startsWith);
+  const layoutIndex = sorted.findIndex(l => l.id === layoutId);
+  if (layoutIndex === -1) {
+    throw new Error(`No layout was found by the given id #${layoutId}`);
+  }
+  const current = sorted[layoutIndex];
+  const next = sorted[layoutIndex + 1];
+  if (!next) {
+    return `@media (min-width: ${current.startsWith}px)`;
+  }
+  return `@media (min-width: ${current.startsWith}px) and (max-width: ${next.startsWith - 1}px)`;
+}
+
 export const getClosestLayoutValue = <V>(map: Record<string, V>, layouts: Layout[], layoutId: string): V => {
   const index = layouts.findIndex(l => l.id === layoutId);
   if (index === -1) {
@@ -51,3 +65,14 @@ export const parseSizing = (sizing: string): Axis => {
   } as Axis;
 };
 
+export const groupBy = <I>(items: I[], getKey: (item: I) => PropertyKey): Record<PropertyKey, I[]> => {
+  const groups: Record<PropertyKey, I[]> = {};
+  for (const item of items) {
+    const key = getKey(item);
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key]!.push(item);
+  }
+  return groups;
+};
