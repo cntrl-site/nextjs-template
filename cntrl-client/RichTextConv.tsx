@@ -1,6 +1,6 @@
-import { CSSProperties, ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { Layout, RichTextEntity, RichTextItem, RichTextStyle, TextTransform, VerticalAlign } from './Format';
-import { getClosestLayoutValue } from './utils';
+import { getClosestLayoutValue, getLayoutMediaQuery, groupBy } from './utils';
 
 interface StyleGroup {
   start: number;
@@ -20,87 +20,113 @@ interface DraftStyle {
   value?: string;
 }
 
-export const FontStyles: Record<string, CSSProperties> = {
+export const FontStyles: Record<string, Record<string, string>> = {
   'normal': {},
-  'bold': { fontWeight: 'bold' },
-  'italic': { fontStyle: 'italic' }
+  'bold': { 'font-weight': 'bold' },
+  'italic': { 'font-style': 'italic' }
 };
 
 export class RichTextConv {
-  toHtml(richText: RichTextItem, layoutId: string, layouts: Layout[]): ReactElement {
+  toHtml(
+    richText: RichTextItem,
+    layouts: Layout[]
+  ): [ReactNode[], string] {
     const { text, blocks = [] } = richText.commonParams;
-    const { styles } = getClosestLayoutValue(richText.layoutParams, layouts, layoutId);
     const root: ReactElement[] = [];
+    const styleRules = layouts.reduce<Record<string, string[]>>((rec, layout) => {
+      rec[layout.id] = [];
+      return rec;
+    }, {});
 
     for (let blockIndex = 0; blockIndex < blocks.length; blockIndex++) {
       const block = blocks[blockIndex];
-      const kids: ReactNode[] = [];
       const content = text.slice(block.start, block.end);
       const entities = block.entities!.sort((a, b) => a.start - b.start) ?? [];
-      const stylesGroup = this.normalizeStyles(
-        styles!
+      if (content.length === 0) {
+        root.push(<div style={{ lineHeight: 0 }}><br /></div>);
+        continue;
+      }
+      const newStylesGroup = layouts.map(({ id: layoutId }) => {
+        const params = getClosestLayoutValue(richText.layoutParams, layouts, layoutId);
+        const styles = params.styles!
           .filter(s => s.start >= block.start && s.end <= block.end)
-          .map(s => ({...s, start: s.start - block.start, end: s.end - block.start})),
-        entities.sort((a, b) => a.start - b.start)
-      );
-      const entitiesGroups = this.groupEntities(entities, stylesGroup);
-      let offset = 0;
-
-      if (block.start === block.end) {
-        root.push(<div><br /></div>);
-        continue;
-      }
-
-      if (!entitiesGroups) {
-        root.push(<div key={`rootContent-${blockIndex}`}>{content}</div>);
-        continue;
-      }
-
-      for (const entity of entitiesGroups) {
-        const stylesBlocks: ReactNode[] = [];
-        const link = entity.link;
-
-        if (offset < entity.start) {
-          kids.push(content.slice(offset, entity.start));
-        }
-
-        for (let stylesIndex = 0; stylesIndex < entity.stylesGroup.length; stylesIndex++) {
-          const style = entity.stylesGroup[stylesIndex];
-          if (offset < style.start) {
-            stylesBlocks.push(content.slice(offset, style.start));
+          .map(s => ({ ...s, start: s.start - block.start, end: s.end - block.start }));
+        return ({
+          layout: layoutId,
+          styles: this.normalizeStyles(styles, entities)
+        });
+      });
+      const sameLayouts = groupBy(newStylesGroup, (item) => this.serializeRanges(item.styles ?? []));
+      for (const group of Object.values(sameLayouts)) {
+        const blockClass = `rt_${richText.id}-b${blockIndex}_${layouts.map(l => group.some(g => g.layout === l.id) ? '1' : '0').join('')}`;
+        const kids: ReactNode[] = [];
+        layouts.forEach(l => {
+          styleRules[l.id].push(`
+            .${blockClass} {
+              display: ${group.some(g => g.layout === l.id) ? 'block' : 'none'};
+              text-align: ${getClosestLayoutValue(richText.layoutParams, layouts, l.id).textAlign};
+              line-height: 0;
+            }
+          `);
+        });
+        const item = group[0];
+        const entitiesGroups = this.groupEntities(entities, item.styles) ?? [];
+        let offset = 0;
+        for (const entity of entitiesGroups) {
+          const entityKids: ReactNode[] = [];
+          if (offset < entity.start) {
+            kids.push(content.slice(offset, entity.start));
+            offset = entity.start;
           }
-
-          const inlineStyles = style.styles.reduce((acc, s) => {
-            const styles = RichTextConv.fromDraftToInline(s);
-            return { ...acc, ...styles }
-          }, {});
-          stylesBlocks.push(
-            <span
-              key={stylesIndex}
-              style={inlineStyles}
-            >
-              {content.slice(style.start, style.end)}
-            </span>
-          );
-          offset = style.end;
+          for (const style of entity.stylesGroup) {
+            if (offset < style.start) {
+              entityKids.push(content.slice(offset, style.start));
+            }
+            entityKids.push(<span key={style.start} className={`s-${style.start}-${style.end}`}>{content.slice(style.start, style.end)}</span>);
+            offset = style.end;
+          }
+          if (offset < entity.end) {
+            entityKids.push(content.slice(offset, entity.end));
+            offset = entity.end;
+          }
+          if (entity.link) {
+            kids.push(<a key={entity.start} target="_blank" href={entity.link} rel="noreferrer">{entityKids}</a>);
+            continue;
+          }
+          kids.push(...entityKids);
         }
-
-        if (offset < entity.end) {
-          stylesBlocks.push(content.slice(offset, entity.end));
+        if (offset < content.length) {
+          kids.push(content.slice(offset));
         }
-
-        const stylesContent = link ? <a target="_blank" href={link} rel="noreferrer">{stylesBlocks}</a> : stylesBlocks;
-        kids.push(stylesContent);
+        for (const item of group) {
+          const entitiesGroups = this.groupEntities(entities, item.styles) ?? [];
+          for (const entitiesGroup of entitiesGroups) {
+            if (!entitiesGroup.stylesGroup) continue;
+            for (const styleGroup of entitiesGroup.stylesGroup) {
+              styleRules[item.layout].push(`
+                .${blockClass} .s-${styleGroup.start}-${styleGroup.end} {
+                  ${styleGroup.styles.map(s => RichTextConv.fromDraftToInline(s)).join('\n')}
+                }
+              `);
+            }
+          }
+        }
+        root.push(<div key={blockClass} className={blockClass}>{kids}</div>);
       }
-
-      if (offset < block.end) {
-        kids.push(content.slice(offset, block.end));
-      }
-
-      const textAlign = richText.layoutParams[layoutId]?.textAlign;
-      root.push(<div key={`rootContent-${blockIndex}`} style={{textAlign: textAlign}}>{kids}</div>);
     }
-    return <>{root}</>;
+    const styles = layouts.map(l => `
+      ${getLayoutMediaQuery(l.id, layouts)} {
+        ${styleRules[l.id].join('\n')}
+      }
+    `).join('\n');
+    return [
+      root,
+      styles
+    ];
+  }
+
+  private serializeRanges(ranges: { start: number; end: number; }[]): string {
+    return ranges.map(r => `${r.start},${r.end}`).join(' ');
   }
 
   private normalizeStyles(styles: RichTextStyle[], entities: RichTextEntity[]): StyleGroup[] | undefined {
@@ -130,54 +156,54 @@ export class RichTextConv {
   private groupEntities(entities: RichTextEntity[], styleGroups?: StyleGroup[]): EntitiesGroup[] | undefined {
     const entitiesGroups: EntitiesGroup[] = [];
     if (!styleGroups) return;
-    if (entities.length) {
-      const start = entities[0].start < styleGroups[0].start ? entities[0].start : styleGroups[0].start;
-      const end = entities[entities.length - 1].end > styleGroups[styleGroups.length - 1].end ? entities[entities.length - 1].end : styleGroups[styleGroups.length - 1].end;
-      const entitiesDividers = entities.reduce((ds, s) => {
-        ds.add(s.start);
-        ds.add(s.end);
-        return ds;
-      }, new Set<number>([start, end]));
-      const entityDividers = Array.from(entitiesDividers).sort((a, b) => a - b);
-
-      for (let i = 0; i < entityDividers.length - 1; i += 1) {
-        const start = entityDividers[i];
-        const end = entityDividers[i + 1];
-        const entity = entities.find(e => e.start === start);
-        entitiesGroups.push({
-          stylesGroup: styleGroups.filter(s => s.start >= start && s.end <= end),
-          start,
-          end,
-          ...(entity && { link: entity.data.url })
-        });
-      }
-    } else {
+    if (entities.length === 0) {
       entitiesGroups.push({
         stylesGroup: styleGroups,
         start: styleGroups[0].start,
         end: styleGroups[styleGroups.length - 1].end
+      });
+      return entitiesGroups;
+    }
+    const start = entities[0].start < styleGroups[0].start ? entities[0].start : styleGroups[0].start;
+    const end = entities[entities.length - 1].end > styleGroups[styleGroups.length - 1].end ? entities[entities.length - 1].end : styleGroups[styleGroups.length - 1].end;
+    const entitiesDividers = entities.reduce((ds, s) => {
+      ds.add(s.start);
+      ds.add(s.end);
+      return ds;
+    }, new Set<number>([start, end]));
+    const entityDividers = Array.from(entitiesDividers).sort((a, b) => a - b);
+
+    for (let i = 0; i < entityDividers.length - 1; i += 1) {
+      const start = entityDividers[i];
+      const end = entityDividers[i + 1];
+      const entity = entities.find(e => e.start === start);
+      entitiesGroups.push({
+        stylesGroup: styleGroups.filter(s => s.start >= start && s.end <= end),
+        start,
+        end,
+        ...(entity && { link: entity.data.url })
       });
     }
 
     return entitiesGroups;
   }
 
-  private static fromDraftToInline (draftStyle: DraftStyle) {
+  private static fromDraftToInline(draftStyle: DraftStyle): string {
     const { value, name } = draftStyle;
-    const map: Record<string, any> = {
-      'COLOR': { color: value },
-      'TYPEFACE': { fontFamily: value },
+    const map: Record<string, Record<string, string | undefined>> = {
+      'COLOR': { 'color': value },
+      'TYPEFACE': { 'font-family': `"${value}"` },
       'FONTSTYLE': value ? { ...FontStyles[value] } : {},
-      'FONTWEIGHT': { fontWeight: value },
-      'FONTSIZE': { fontSize: `${parseFloat(value!) * 100}vw` },
-      'LINEHEIGHT': { lineHeight: `${parseFloat(value!) * 100}vw` },
-      'LETTERSPACING': { letterSpacing: `${parseFloat(value!) * 100}vw` },
-      'WORDSPACING': { wordSpacing: `${parseFloat(value!) * 100}vw` },
-      'TEXTTRANSFORM': value ? { textTransform: value as TextTransform } : { textTransform: TextTransform.None },
-      'VERTICALALIGN': value ? { verticalAlign: value as VerticalAlign } : { verticalAlign: VerticalAlign.Unset },
-      'TEXTDECORATION': { textDecoration: value }
+      'FONTWEIGHT': { 'font-weight': value },
+      'FONTSIZE': { 'font-size': `${parseFloat(value!) * 100}vw` },
+      'LINEHEIGHT': { 'line-height': `${parseFloat(value!) * 100}vw` },
+      'LETTERSPACING': { 'letter-spacing': `${parseFloat(value!) * 100}vw` },
+      'WORDSPACING': { 'word-spacing': `${parseFloat(value!) * 100}vw` },
+      'TEXTTRANSFORM': value ? { 'text-transform': value as TextTransform } : { 'text-transform': TextTransform.None },
+      'VERTICALALIGN': value ? { 'vertical-align': value as VerticalAlign } : { 'vertical-align': VerticalAlign.Unset },
+      'TEXTDECORATION': { 'text-decoration': value }
     };
-
-    return map[name];
+    const css = map[name];
+    return Object.entries(css).filter(([, value]) => !!value).map(([prop, value]) => `${prop}: ${value};`).join('\n');
   }
 }
