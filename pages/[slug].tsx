@@ -1,18 +1,21 @@
 import type { GetStaticProps, NextPage } from 'next'
-import { CntrlClient } from '../cntrl-client/CntrlClient';
-import { Article as TArticle, Project, TPage } from '../cntrl-client/Format';
+import { TArticle, TProject, TPage } from '@cntrl-site/core';
+import { CntrlClient } from '@cntrl-site/sdk';
 import Page from '../components/Page/Page';
 
-const client = new CntrlClient(process.env.CNTRL_PROJECT_ID!);
+const client = new CntrlClient(
+  process.env.CNTRL_PROJECT_ID!,
+  process.env.CNTRL_API_URL!
+);
 
 interface Props {
   article: TArticle;
-  project: Project;
+  project: TProject;
   page: TPage;
 }
 
 const CntrlPage: NextPage<Props> = (props) => {
-  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta);
+  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta!);
   return (
     <Page
       project={props.project}

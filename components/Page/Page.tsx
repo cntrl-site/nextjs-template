@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
 import HTMLReactParser, { domToReact } from 'html-react-parser';
+import { TArticle, TProject, TMeta } from '@cntrl-site/core';
 import Head from 'next/head';
-import { Article as TArticle, Meta, Project } from '../../cntrl-client/Format';
-import Article from '../../cntrl-client/components/Article';
+import { Article } from '@cntrl-site/sdk-nextjs';
 
 interface Props {
   article: TArticle;
-  project: Project;
-  meta: Meta;
+  project: TProject;
+  meta: TMeta;
 }
 
 const Page: FC<Props> = ({ article, project, meta }) => {
