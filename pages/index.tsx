@@ -1,7 +1,7 @@
 import type { GetStaticProps, NextPage } from 'next'
-import { CntrlClient } from '@cntrl-site/sdk';
 import { TArticle, TProject, TPage } from '@cntrl-site/core';
-import Page from '../components/Page/Page';
+import { CntrlClient } from '@cntrl-site/sdk';
+import { Page } from '@cntrl-site/sdk-nextjs';
 import { Redirect } from '../components/Redirect';
 
 const client = new CntrlClient(process.env.CNTRL_PROJECT_ID!, process.env.CNTRL_API_URL!);
