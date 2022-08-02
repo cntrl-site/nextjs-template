@@ -44,18 +44,17 @@ const Page: FC<Props> = ({ article, project, meta }) => {
             }}
           />
         )}
-        {project.fonts.adobe}
         {Object.values(parsedFonts as ReturnType<typeof domToReact>).map((value, i) => {
+          console.log(value);
           if (!value) return undefined;
-          const rel = value.props?.rel;
-          const href = value.props?.href;
+          const rel = value?.rel || value.props?.rel;
+          const href = value?.href || value.props?.href;
           if (!rel || !href) return undefined;
           return (
             <link key={i} rel={rel} href={href} />
           );
         })}
         {htmlHead}
-
       </Head>
       {afterBodyOpen}
       <Article article={article} layouts={project.layouts} />
