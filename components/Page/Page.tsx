@@ -45,7 +45,6 @@ const Page: FC<Props> = ({ article, project, meta }) => {
           />
         )}
         {Object.values(parsedFonts as ReturnType<typeof domToReact>).map((value, i) => {
-          console.log(value);
           if (!value) return undefined;
           const rel = value?.rel || value.props?.rel;
           const href = value?.href || value.props?.href;
