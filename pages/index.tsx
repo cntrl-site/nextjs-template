@@ -1,13 +1,13 @@
 import type { GetStaticProps, NextPage } from 'next'
-import { CntrlClient } from '../cntrl-client/CntrlClient';
-import { Article as TArticle, Project, TPage } from '../cntrl-client/Format';
-import Page from '../components/Page/Page';
+import { TArticle, TProject, TPage } from '@cntrl-site/core';
+import { CntrlClient } from '@cntrl-site/sdk';
+import { Page } from '@cntrl-site/sdk-nextjs';
 import { Redirect } from '../components/Redirect';
 
-const client = new CntrlClient(process.env.CNTRL_PROJECT_ID!);
+const client = new CntrlClient(process.env.CNTRL_PROJECT_ID!, process.env.CNTRL_API_URL!);
 
 interface Props {
-  project: Project;
+  project: TProject;
   article?: TArticle;
   page?: TPage;
 }
@@ -17,7 +17,7 @@ const Index: NextPage<Props> = (props) => {
     return <Redirect />;
   }
 
-  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta);
+  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta!);
 
   return (
     <Page
