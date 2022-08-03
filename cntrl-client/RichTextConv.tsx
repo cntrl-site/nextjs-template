@@ -1,6 +1,7 @@
 import { ReactElement, ReactNode } from 'react';
 import { Layout, RichTextEntity, RichTextItem, RichTextStyle, TextTransform, VerticalAlign } from './Format';
 import { getClosestLayoutValue, getLayoutMediaQuery, groupBy } from './utils';
+import item from './components/Item';
 
 interface StyleGroup {
   start: number;
@@ -37,13 +38,25 @@ export class RichTextConv {
       rec[layout.id] = [];
       return rec;
     }, {});
+    let currentLineHeight = layouts.reduce<Record<string, string>>((rec, layout) => {
+      const styles = getClosestLayoutValue(richText.layoutParams, layouts, layout.id)?.styles;
+      rec[layout.id] = styles?.find(s => s.style === 'LINEHEIGHT')?.value ?? '0';
+      return rec;
+    }, {});
 
     for (let blockIndex = 0; blockIndex < blocks.length; blockIndex++) {
       const block = blocks[blockIndex];
       const content = text.slice(block.start, block.end);
       const entities = block.entities!.sort((a, b) => a.start - b.start) ?? [];
       if (content.length === 0) {
-        root.push(<div style={{ lineHeight: 0 }}><br /></div>);
+        root.push(<div className={`rt_${richText.id}_br_${blockIndex}`}><br /></div>);
+        layouts.forEach(l => {
+          const lh = RichTextConv.fromDraftToInline({
+            name: 'LINEHEIGHT',
+            value: currentLineHeight[l.id]
+          });
+          styleRules[l.id].push(`.rt_${richText.id}_br_${blockIndex} {${lh}}`);
+        });
         continue;
       }
       const newStylesGroup = layouts.map(({ id: layoutId }) => {
@@ -103,6 +116,10 @@ export class RichTextConv {
           for (const entitiesGroup of entitiesGroups) {
             if (!entitiesGroup.stylesGroup) continue;
             for (const styleGroup of entitiesGroup.stylesGroup) {
+              const lineHeight = styleGroup.styles.find(s => s.name === 'LINEHEIGHT');
+              if (lineHeight?.value) {
+                currentLineHeight[item.layout] = lineHeight.value;
+              }
               styleRules[item.layout].push(`
                 .${blockClass} .s-${styleGroup.start}-${styleGroup.end} {
                   ${styleGroup.styles.map(s => RichTextConv.fromDraftToInline(s)).join('\n')}
