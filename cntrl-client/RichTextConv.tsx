@@ -221,6 +221,9 @@ export class RichTextConv {
       'TEXTDECORATION': { 'text-decoration': value }
     };
     const css = map[name];
+    if (!css) {
+      return '';
+    }
     return Object.entries(css).filter(([, value]) => !!value).map(([prop, value]) => `${prop}: ${value};`).join('\n');
   }
 }
