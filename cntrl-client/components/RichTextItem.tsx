@@ -11,7 +11,7 @@ const RichTextItem: FC<ItemProps<RichTextItem>> = ({ item, layouts }) => {
   const [content, styles] = richTextConv.toHtml(item, layouts);
   return (
     <>
-      <div className="rich-text">{content}</div>
+      <div className="rich-text" style={{ whiteSpace: 'pre-wrap' }}>{content}</div>
       <JSXStyle id={item.id}>
         {styles}
       </JSXStyle>
