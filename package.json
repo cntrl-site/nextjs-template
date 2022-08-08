@@ -12,7 +12,7 @@
   "dependencies": {
     "@cntrl-site/core": "^1.0.6",
     "@cntrl-site/sdk": "^0.0.1",
-    "@cntrl-site/sdk-nextjs": "^0.0.5",
+    "@cntrl-site/sdk-nextjs": "^0.0.6",
     "html-react-parser": "^1.4.14",
     "next": "^12.2.3",
     "react": "^18.2.0",
