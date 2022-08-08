@@ -12,12 +12,11 @@
   "dependencies": {
     "@cntrl-site/core": "^1.0.6",
     "@cntrl-site/sdk": "^0.0.1",
-    "@cntrl-site/sdk-nextjs": "^0.0.6",
+    "@cntrl-site/sdk-nextjs": "^0.0.7",
     "html-react-parser": "^1.4.14",
     "next": "^12.2.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-jss": "^10.9.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/isomorphic-fetch": "^0.0.36",
