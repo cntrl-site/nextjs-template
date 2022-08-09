@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next';
 import { CntrlClient, TArticle, TProject, TPage, Page } from '@cntrl-site/sdk-nextjs';
 import { Redirect } from '../components/Redirect';
 
