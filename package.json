@@ -10,9 +10,7 @@
     "export": "npm run build && next export -o _static"
   },
   "dependencies": {
-    "@cntrl-site/core": "^1.0.6",
-    "@cntrl-site/sdk": "^0.0.1",
-    "@cntrl-site/sdk-nextjs": "^0.0.7",
+    "@cntrl-site/sdk-nextjs": "^0.0.8",
     "html-react-parser": "^1.4.14",
     "next": "^12.2.3",
     "react": "^18.2.0",
