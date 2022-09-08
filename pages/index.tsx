@@ -15,7 +15,7 @@ const Index: NextPage<Props> = (props) => {
     return <Redirect />;
   }
 
-  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta!);
+  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta!, props.page.enableMeta);
 
   return (
     <Page

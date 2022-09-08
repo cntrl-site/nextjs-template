@@ -1,6 +1,6 @@
 {
   "name": "cntrl-next-template",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3005",
@@ -10,6 +10,8 @@
     "export": "npm run build && next export -o _static"
   },
   "dependencies": {
+    "@cntrl-site/core": "^1.0.16",
+    "@cntrl-site/sdk": "^0.2.3",
     "@cntrl-site/sdk-nextjs": "^0.1.3",
     "next": "^12.2.4",
     "react": "^18.2.0",
