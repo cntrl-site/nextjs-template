@@ -14,7 +14,7 @@ interface Props {
 }
 
 const CntrlPage: NextPage<Props> = (props) => {
-  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta!);
+  const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta!, props.page.enableMeta);
   return (
     <Page
       project={props.project}
