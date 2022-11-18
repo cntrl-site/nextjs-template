@@ -48,14 +48,12 @@ export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ para
 
 export async function getStaticPaths() {
   const res = await client.getProject();
-  const routes = res.pages
+  const paths = res.pages
     .map(page => ({
       params: {
         slug: [page.slug]
       }
     }));
-  console.log(JSON.stringify(routes));
-  const paths = routes;
   return { paths, fallback: false };
 }
 
