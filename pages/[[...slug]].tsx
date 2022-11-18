@@ -52,7 +52,7 @@ export async function getStaticPaths() {
     .map(page => ({
       params: {
         slug: [page.slug]
-      },
+      }
     }));
   console.log(JSON.stringify(routes));
   const paths = routes;
