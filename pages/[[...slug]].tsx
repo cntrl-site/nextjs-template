@@ -29,12 +29,13 @@ type ParamsWithSlug = {
 };
 
 export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ params }) => {
-  if (params?.slug === undefined) {
-    throw new Error('Slug is not defined');
-  }
+  const originalSlug = params?.slug;
+  const slug = Array.isArray(originalSlug)
+    ? originalSlug.join('/')
+    : '';
   const project = await client.getProject();
-  const article = await client.getPageArticle(params.slug);
-  const page = project.pages.find(page => page.slug === params.slug);
+  const article = await client.getPageArticle(slug);
+  const page = project.pages.find(page => page.slug === slug);
 
   return {
     props: {
@@ -47,15 +48,12 @@ export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ para
 
 export async function getStaticPaths() {
   const res = await client.getProject();
-
   const paths = res.pages
-    .filter(page => page.slug !== '')
-    .map((page) => ({
+    .map(page => ({
       params: {
-        slug: page.slug
+        slug: [page.slug]
       }
     }));
-
   return { paths, fallback: false };
 }
 
