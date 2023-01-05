@@ -1,6 +1,7 @@
 import type { GetStaticProps, NextPage } from 'next';
 import { CntrlClient, TArticle, TProject, TPage } from '@cntrl-site/sdk-nextjs';
-import { Page } from '@cntrl-site/sdk-nextjs';
+import { Page, cntrlSdkContext } from '@cntrl-site/sdk-nextjs';
+import { TTypePresets } from '@cntrl-site/core';
 
 const client = new CntrlClient(
   process.env.CNTRL_PROJECT_ID!,
@@ -10,11 +11,14 @@ const client = new CntrlClient(
 interface Props {
   article: TArticle;
   project: TProject;
+  typePresets: TTypePresets;
   page: TPage;
 }
 
 const CntrlPage: NextPage<Props> = (props) => {
   const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta!);
+  cntrlSdkContext.setLayouts(props.project.layouts);
+  cntrlSdkContext.setTypePresets(props.typePresets);
   return (
     <Page
       project={props.project}
@@ -28,20 +32,22 @@ type ParamsWithSlug = {
   slug: string;
 };
 
-export const getStaticProps: GetStaticProps<any, ParamsWithSlug> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<Props, ParamsWithSlug> = async ({ params }) => {
   const originalSlug = params?.slug;
   const slug = Array.isArray(originalSlug)
     ? originalSlug.join('/')
     : '';
   const project = await client.getProject();
   const article = await client.getPageArticle(slug);
-  const page = project.pages.find(page => page.slug === slug);
+  const typePresets = await client.getTypePresets();
+  const page = project.pages.find(page => page.slug === slug)!;
 
   return {
     props: {
       project,
       article,
-      page
+      page,
+      typePresets
     }
   }
 };
