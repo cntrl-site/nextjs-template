@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app';
 import { CntrlProvider } from '@cntrl-site/sdk-nextjs';
 
 // place for your custom items definitions
-// CustomItems.define('customItem1', CustomItem1);
+// cntrlSdkContext.customItems.define('customItem1', CustomItem1);
 
 function App({ Component, pageProps }: AppProps) {
   return (
