@@ -1,7 +1,7 @@
 import type { GetStaticProps, NextPage } from 'next';
 import { CntrlClient, TArticle, TProject, TPage } from '@cntrl-site/sdk-nextjs';
 import { Page, cntrlSdkContext } from '@cntrl-site/sdk-nextjs';
-import { TTypePresets } from '@cntrl-site/core';
+import { TKeyframeAny, TTypePresets } from '@cntrl-site/core';
 
 const client = new CntrlClient(
   process.env.CNTRL_PROJECT_ID!,
@@ -13,17 +13,20 @@ interface Props {
   project: TProject;
   typePresets: TTypePresets;
   page: TPage;
+  keyframes: TKeyframeAny[];
 }
 
 const CntrlPage: NextPage<Props> = (props) => {
   const meta = CntrlClient.getPageMeta(props.project.meta, props.page.meta!);
   cntrlSdkContext.setLayouts(props.project.layouts);
   cntrlSdkContext.setTypePresets(props.typePresets);
+
   return (
     <Page
       project={props.project}
       article={props.article}
       meta={meta}
+      keyframes={props.keyframes}
     />
   );
 }
@@ -40,6 +43,7 @@ export const getStaticProps: GetStaticProps<Props, ParamsWithSlug> = async ({ pa
   const project = await client.getProject();
   const article = await client.getPageArticle(slug);
   const typePresets = await client.getTypePresets();
+  const keyframes = await client.getKeyframes(article.id);
   const page = project.pages.find(page => page.slug === slug)!;
 
   return {
@@ -47,7 +51,8 @@ export const getStaticProps: GetStaticProps<Props, ParamsWithSlug> = async ({ pa
       project,
       article,
       page,
-      typePresets
+      typePresets,
+      keyframes
     }
   }
 };
