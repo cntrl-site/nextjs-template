@@ -10,10 +10,11 @@
     "export": "npm run build && next export -o _static"
   },
   "dependencies": {
-    "@cntrl-site/sdk-nextjs": "^0.4.2",
+    "@cntrl-site/sdk-nextjs": "/Users/mac/Desktop/momdesign-projects/sdk-nextjs/cntrl-site-sdk-nextjs-0.4.4.tgz",
     "next": "^12.2.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-scroll": "^1.8.9"
   },
   "devDependencies": {
     "@types/node": "17.0.35",
