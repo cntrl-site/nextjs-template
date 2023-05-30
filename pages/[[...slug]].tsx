@@ -3,10 +3,7 @@ import { CntrlClient, TArticle, TProject, TPage } from '@cntrl-site/sdk-nextjs';
 import { Page, cntrlSdkContext } from '@cntrl-site/sdk-nextjs';
 import { TKeyframeAny, TTypePresets } from '@cntrl-site/core';
 
-const client = new CntrlClient(
-  process.env.CNTRL_PROJECT_ID!,
-  process.env.CNTRL_API_URL!
-);
+const client = new CntrlClient(process.env.CNTRL_API_URL!);
 
 interface Props {
   article: TArticle;
@@ -41,9 +38,8 @@ export const getStaticProps: GetStaticProps<Props, ParamsWithSlug> = async ({ pa
     ? originalSlug.join('/')
     : '';
   const project = await client.getProject();
-  const article = await client.getPageArticle(slug);
+  const { article, keyframes } = await client.getPageArticle(slug);
   const typePresets = await client.getTypePresets();
-  const keyframes = await client.getKeyframes(article.id);
   const page = project.pages.find(page => page.slug === slug)!;
 
   return {
