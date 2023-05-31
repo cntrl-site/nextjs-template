@@ -1,9 +1,10 @@
 import '../styles/reset.css';
 import type { AppProps } from 'next/app';
-import { CntrlProvider } from '@cntrl-site/sdk-nextjs';
+import { CntrlProvider, cntrlSdkContext } from '@cntrl-site/sdk-nextjs';
+import { MyComponent } from '../components/MyComponent';
 
 // place for your custom items definitions
-// cntrlSdkContext.customItems.define('customItem1', CustomItem1);
+cntrlSdkContext.customItems.define('my-component', MyComponent);
 
 function App({ Component, pageProps }: AppProps) {
   return (
