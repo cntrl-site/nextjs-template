@@ -5,6 +5,7 @@ const client = new CntrlClient(process.env.CNTRL_API_URL!);
 
 interface Props extends PageProps {
   typePresets: TTypePresets;
+  sectionData: Record<string, any>;
 }
 
 type ParamsWithSlug = {
@@ -22,9 +23,15 @@ const CntrlPage: NextPage<Props> = (props) => {
 export const getStaticProps: GetStaticProps<Props, ParamsWithSlug> = async ({ params }) => {
   const originalSlug = params?.slug;
   const slug = Array.isArray(originalSlug) ? originalSlug.join('/') : '';
-  const props = await client.getPageData(slug);
+  const cntrlPageData = await client.getPageData(slug);
+  const sectionData = await cntrlSdkContext.resolveSectionData(cntrlPageData.article.sections);
 
-  return { props };
+  return {
+    props: {
+      ...cntrlPageData,
+      sectionData
+    }
+  };
 };
 
 export async function getStaticPaths() {
