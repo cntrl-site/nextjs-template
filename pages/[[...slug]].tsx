@@ -1,5 +1,5 @@
 import type { GetStaticProps, NextPage } from 'next';
-import { CntrlClient, Page, PageProps, cntrlSdkContext, TTypePresets, TArticleSection } from '@cntrl-site/sdk-nextjs';
+import { CntrlClient, Page, PageProps, cntrlSdkContext, TTypePresets } from '@cntrl-site/sdk-nextjs';
 
 const client = new CntrlClient(process.env.CNTRL_API_URL!);
 
