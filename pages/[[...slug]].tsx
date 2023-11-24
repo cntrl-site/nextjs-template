@@ -1,25 +1,20 @@
 import type { GetStaticProps, NextPage } from 'next';
-import { CntrlClient, Page, PageProps, cntrlSdkContext, TTypePresets } from '@cntrl-site/sdk-nextjs';
+import { CntrlClient, Page, PageProps, cntrlSdkContext } from '@cntrl-site/sdk-nextjs';
 
 const client = new CntrlClient(process.env.CNTRL_API_URL!);
-
-interface Props extends PageProps {
-  typePresets: TTypePresets;
-  sectionData: Record<string, any>;
-}
 
 type ParamsWithSlug = {
   slug: string;
 };
 
-const CntrlPage: NextPage<Props> = (props) => {
+const CntrlPage: NextPage<PageProps> = (props) => {
   cntrlSdkContext.init(props);
   return (
     <Page {...props} />
   );
 }
 
-export const getStaticProps: GetStaticProps<Props, ParamsWithSlug> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<PageProps, ParamsWithSlug> = async ({ params }) => {
   const originalSlug = params?.slug;
   const slug = Array.isArray(originalSlug) ? originalSlug.join('/') : '';
   const cntrlPageData = await client.getPageData(slug);
