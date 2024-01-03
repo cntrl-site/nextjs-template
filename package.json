@@ -12,7 +12,7 @@
     "prebuild": "npm run generate-layouts"
   },
   "dependencies": {
-    "@cntrl-site/sdk-nextjs": "^0.21.0",
+    "@cntrl-site/sdk-nextjs": "^0.21.1",
     "next": "^13.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
