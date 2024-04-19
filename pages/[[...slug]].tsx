@@ -30,15 +30,11 @@ export const getStaticProps: GetStaticProps<PageProps, ParamsWithSlug> = async (
 
 export async function getStaticPaths() {
   const pagePaths = await client.getProjectPagesPaths();
-  const paths = pagePaths.map(path => {
-    const segments = path.split('/');
-    const params = segments.map((segment, index) => ({
-      params: {
-        slug: segments.slice(0, index + 1)
-      }
-    }));
-    return params;
-  }).flat();
+  const paths = pagePaths.map(path => ({
+    params: {
+      slug: path.split('/')
+    }
+  }));
   return { paths, fallback: false };
 }
 
