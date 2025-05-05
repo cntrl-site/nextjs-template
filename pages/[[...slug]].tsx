@@ -1,8 +1,6 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import { CntrlClient, Page, PageProps, cntrlSdkContext } from '@cntrl-site/sdk-nextjs';
 
-const client = new CntrlClient(process.env.CNTRL_API_URL!);
-
 type ParamsWithSlug = {
   slug: string;
 };
@@ -15,6 +13,7 @@ const CntrlPage: NextPage<PageProps> = (props) => {
 }
 
 export const getServerSideProps: GetServerSideProps<PageProps, ParamsWithSlug> = async ({ params }) => {
+  const client = new CntrlClient(process.env.CNTRL_API_URL!);
   const originalSlug = params?.slug;
   const slug = Array.isArray(originalSlug) ? originalSlug.join('/') : '';
   const cntrlPageData = await client.getPageData(slug);

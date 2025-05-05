@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "export": "npm run build",
-    "generate-layouts": "cntrl-sdk generate-layouts -o styles/cntrl.scss",
-    "prebuild": "npm run generate-layouts"
+    "generate-layouts": "cntrl-sdk generate-layouts -o styles/cntrl.scss"
   },
   "dependencies": {
     "@cntrl-site/sdk-nextjs": "^1.8.6",
