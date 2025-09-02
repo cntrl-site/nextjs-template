@@ -1,4 +1,5 @@
-const isCodeExport = process.env.CNTRL_BUILD_MODE === 'code-export';
+const isCodeExport = process.env.CNTRL_BUILD_MODE === 'self-hosted';
+
 const nextConfig = {
   reactStrictMode: false,
   trailingSlash: true,
