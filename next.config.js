@@ -5,7 +5,10 @@ const nextConfig = {
   trailingSlash: true,
   output: 'export',
   distDir: '_static',
-  assetPrefix: isCodeExport ? './' : undefined
+  assetPrefix: isCodeExport ? './' : undefined,
+  typescript: {
+    ignoreBuildErrors: isCodeExport,
+  }
 };
 
 module.exports = nextConfig;
