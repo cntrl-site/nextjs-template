@@ -1,8 +1,5 @@
-import type { GetStaticProps, NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import { CntrlClient, Page, PageProps, cntrlSdkContext } from '@cntrl-site/sdk-nextjs';
-
-const client = new CntrlClient(process.env.CNTRL_API_URL!);
-const buildMode = process.env.CNTRL_BUILD_MODE!;
 
 type ParamsWithSlug = {
   slug: string;
@@ -15,7 +12,9 @@ const CntrlPage: NextPage<PageProps> = (props) => {
   );
 }
 
-export const getStaticProps: GetStaticProps<PageProps, ParamsWithSlug> = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps<PageProps, ParamsWithSlug> = async ({ params }) => {
+  const client = new CntrlClient(process.env.CNTRL_API_URL!);
+  const buildMode = process.env.CNTRL_BUILD_MODE!;
   const originalSlug = params?.slug;
   const slug = Array.isArray(originalSlug) ? originalSlug.join('/') : '';
   const cntrlPageData = await client.getPageData(slug, buildMode === 'self-hosted' ? 'self-hosted' : 'default');
@@ -28,15 +27,5 @@ export const getStaticProps: GetStaticProps<PageProps, ParamsWithSlug> = async (
     }
   };
 };
-
-export async function getStaticPaths() {
-  const pagePaths = await client.getProjectPagesPaths();
-  const paths = pagePaths.map(path => ({
-    params: {
-      slug: path.split('/')
-    }
-  }));
-  return { paths, fallback: false };
-}
 
 export default CntrlPage;
