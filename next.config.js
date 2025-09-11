@@ -6,9 +6,6 @@ const nextConfig = {
   output: 'export',
   distDir: '_static',
   assetPrefix: isCodeExport ? './' : undefined,
-  typescript: {
-    ignoreBuildErrors: isCodeExport,
-  }
 };
 
 module.exports = nextConfig;
