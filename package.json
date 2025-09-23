@@ -11,7 +11,7 @@
     "generate-layouts": "cntrl-sdk generate-layouts -o styles/cntrl.scss"
   },
   "dependencies": {
-    "@cntrl-site/sdk-nextjs": "^1.8.31",
+    "@cntrl-site/sdk-nextjs": "^1.8.37",
     "next": "^14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -19,8 +19,8 @@
   },
   "devDependencies": {
     "@types/node": "17.0.35",
-    "@types/react": "18.0.9",
-    "@types/react-dom": "18.0.4",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
     "eslint": "8.16.0",
     "eslint-config-next": "^14.2.3",
     "typescript": "^5.2.2"
