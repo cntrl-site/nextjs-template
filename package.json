@@ -11,7 +11,7 @@
     "generate-layouts": "cntrl-sdk generate-layouts -o styles/cntrl.scss"
   },
   "dependencies": {
-    "@cntrl-site/sdk-nextjs": "^1.9.33",
+    "@cntrl-site/sdk-nextjs": "^1.9.37",
     "next": "^14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
