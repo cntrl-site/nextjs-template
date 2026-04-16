@@ -19,7 +19,7 @@ const localPackages = [
 const nextConfig = {
   reactStrictMode: false,
   trailingSlash: true,
-  output: 'export',
+  // output: 'export',
   distDir: '_static',
   assetPrefix: isCodeExport ? './' : undefined,
   ...(localPackages.length > 0 ? { transpilePackages: localPackages } : {}),
