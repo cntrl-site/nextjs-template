@@ -38,6 +38,7 @@ const nextConfig = {
     }
     if (componentsDir) {
       config.resolve.alias['@cntrl-site/components/style/components.css'] = path.resolve(componentsDir, 'dist/components.css');
+      config.resolve.alias['@cntrl-site/components/utils'] = path.resolve(componentsDir, 'dist/utils.mjs');
       config.resolve.alias['@cntrl-site/components'] = path.resolve(componentsDir, 'dist/index.mjs');
     }
     return config;
