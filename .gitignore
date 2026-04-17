@@ -36,3 +36,4 @@ yarn-error.log*
 *.tsbuildinfo
 .idea
 cntrl.scss
+.cntrl-components/
