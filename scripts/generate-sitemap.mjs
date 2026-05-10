@@ -58,9 +58,8 @@ async function fetchProject(rawApiUrl) {
     throw new Error('CNTRL_API_URL must include project id and API key (https://<id>:<key>@api.cntrl.site).');
   }
   const endpoint = new URL(`/projects/${projectId}?buildMode=default`, url.origin);
-  const auth = Buffer.from(`${projectId}:${apiKey}`).toString('base64');
   const response = await fetch(endpoint.href, {
-    headers: { Authorization: `Basic ${auth}` }
+    headers: { Authorization: `Bearer ${apiKey}` }
   });
   if (!response.ok) {
     throw new Error(`Project fetch failed (${response.status} ${response.statusText}).`);
