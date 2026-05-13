@@ -27,7 +27,8 @@ export const getStaticProps: GetStaticProps<PageProps, ParamsWithSlug> = async (
     props: {
       ...cntrlPageData,
       sectionData,
-      publicApiBase
+      publicApiBase,
+      ...(process.env.SITE_URL ? { siteUrl: process.env.SITE_URL } : {})
     }
   };
 };
