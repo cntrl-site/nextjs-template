@@ -39,7 +39,7 @@ try {
 
   const sitemapXml = renderSitemap(indexable, siteUrl, lastmod);
   writeFileSync(resolve(publicDir, 'sitemap.xml'), sitemapXml);
-  console.log(`[sitemap] Wrote public/sitemap.xml for ${siteUrl} (${indexable.length} of ${pages.length} pages)`);
+  console.log(`[sitemap] Wrote public/sitemap.xml for ${siteUrl.origin} (${indexable.length} of ${pages.length} pages)`);
 
   const robotsTxt = renderRobots(siteUrl);
   writeFileSync(resolve(publicDir, 'robots.txt'), robotsTxt);
@@ -68,14 +68,39 @@ async function fetchProject(rawApiUrl) {
 }
 
 function resolveSiteUrl(project, override) {
-  if (override) return stripTrailingSlash(ensureProtocol(override));
-  if (project?.primaryDomain) return stripTrailingSlash(ensureProtocol(project.primaryDomain));
-  return null;
+  const host = override || project?.primaryDomain;
+  if (!host) return null;
+  return parseAsUrl(host);
 }
 
-function ensureProtocol(value) {
-  if (/^https?:\/\//i.test(value)) return value;
-  return `https://${value}`;
+function buildPageUrl(siteUrl, slug) {
+  const base = new URL(siteUrl.href);
+  if (!base.pathname.endsWith('/')) base.pathname += '/';
+  const relative = stripSlashes(slug);
+  const target = relative ? new URL(`${relative}/`, base) : base;
+  target.search = '';
+  target.hash = '';
+  return target.toString();
+}
+
+function parseAsUrl(input) {
+  return tryParseUrl(input) ?? tryParseUrl(`https://${input}`);
+}
+
+function tryParseUrl(input) {
+  try {
+    return new URL(input);
+  } catch {
+    return null;
+  }
+}
+
+function stripSlashes(value) {
+  let start = 0;
+  let end = value.length;
+  while (start < end && value[start] === '/') start += 1;
+  while (end > start && value[end - 1] === '/') end -= 1;
+  return value.slice(start, end);
 }
 
 function isIndexablePage(page) {
@@ -87,8 +112,7 @@ function isIndexablePage(page) {
 
 function renderSitemap(pages, siteUrl, lastmod) {
   const entries = pages.map(page => {
-    const path = page.slug ? `/${page.slug}` : '/';
-    const loc = escapeXml(`${siteUrl}${path}`);
+    const loc = escapeXml(buildPageUrl(siteUrl, page.slug));
     const priority = page.slug === '' ? '1.00' : '0.80';
     const updated = page.updatedAt ? new Date(page.updatedAt).toISOString() : lastmod;
     return [
@@ -109,11 +133,12 @@ function renderSitemap(pages, siteUrl, lastmod) {
 }
 
 function renderRobots(siteUrl) {
+  const sitemapUrl = new URL('/sitemap.xml', siteUrl.origin).toString();
   return [
     'User-agent: *',
     'Allow: /',
     '',
-    `Sitemap: ${siteUrl}/sitemap.xml`,
+    `Sitemap: ${sitemapUrl}`,
     ''
   ].join('\n');
 }
@@ -125,10 +150,6 @@ function escapeXml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
-}
-
-function stripTrailingSlash(value) {
-  return value.endsWith('/') ? value.slice(0, -1) : value;
 }
 
 function loadDotenv(envPath) {
