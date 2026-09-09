@@ -1,6 +1,9 @@
 const path = require('path');
 
 const isCodeExport = process.env.CNTRL_BUILD_MODE === 'self-hosted';
+// Staging renders pages on demand with ISR instead of exporting a static site.
+// Dropping `output: 'export'` is what makes ISR legal; the page decides the rest.
+const isStaging = process.env.CNTRL_BUILD_MODE === 'staging';
 
 const localSdkNextjsPath = process.env.LOCAL_SDK_NEXTJS_REL_PATH;
 const localSdkPath = process.env.LOCAL_SDK_REL_PATH;
@@ -19,7 +22,11 @@ const localPackages = [
 const nextConfig = {
   reactStrictMode: false,
   trailingSlash: true,
-  output: 'export',
+  // Staging images are built once and started per project, so the base path
+  // arrives at runtime; `next start` re-reads this file and applies it.
+  ...(isStaging
+    ? { basePath: process.env.NEXT_PUBLIC_BASE_PATH || '' }
+    : { output: 'export' }),
   distDir: '_static',
   assetPrefix: isCodeExport ? './' : undefined,
   ...(localPackages.length > 0 ? { transpilePackages: localPackages } : {}),
