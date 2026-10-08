@@ -1,0 +1,48 @@
+name: Publish staging image
+
+# Every commit on main becomes the image behind staging.cntrl.site: AWSPreviewStore
+# runs task definition `nextjs-staging`, which references this repository's
+# `latest` tag and is pulled at task start, so the next STG press runs this
+# commit. The sha tag exists so a bad push can be rolled back by re-tagging
+# instead of reverting and waiting for a build.
+on:
+  push:
+    branches:
+      - main
+
+# Pushes queue rather than race: two builds tagging `latest` at once could
+# leave it pointing at the older commit.
+concurrency:
+  group: publish-staging-image
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Log in to Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # linux/amd64: the task runs on X86_64 Fargate. CNTRL_BUILD_MODE=staging
+      # is baked by the Dockerfile; the project arrives at run time.
+      - name: Build and push
+        env:
+          IMAGE: ${{ steps.ecr.outputs.registry }}/cntrl-site/nextjs-staging
+        run: |
+          docker buildx build --platform linux/amd64 \
+            -t "$IMAGE:latest" -t "$IMAGE:${{ github.sha }}" .
+          docker push "$IMAGE:latest"
+          docker push "$IMAGE:${{ github.sha }}"
