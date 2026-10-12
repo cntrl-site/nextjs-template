@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@cntrl-site/sdk-nextjs": "^1.10.10",
-    "next": "^14.2.3",
+    "next": "^14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sass": "^1.63.4"
@@ -24,7 +24,19 @@
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "eslint": "8.16.0",
-    "eslint-config-next": "^14.2.3",
+    "eslint-config-next": "^14.2.35",
     "typescript": "^5.2.2"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.29"
+    },
+    "@next/eslint-plugin-next": {
+      "glob": "^10.5.0"
+    },
+    "eslint-plugin-vue": {
+      "postcss-selector-parser": "^7.1.6"
+    },
+    "trim": "^0.0.3"
   }
 }
