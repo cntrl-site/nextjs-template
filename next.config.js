@@ -30,7 +30,7 @@ const nextConfig = {
   distDir: '_static',
   assetPrefix: isCodeExport ? './' : undefined,
   ...(localPackages.length > 0 ? { transpilePackages: localPackages } : {}),
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     const hasLocalPackages = sdkNextjsDir || sdkDir || componentsDir;
     if (hasLocalPackages) {
       config.resolve.alias['react'] = path.resolve(__dirname, 'node_modules/react');
@@ -47,6 +47,7 @@ const nextConfig = {
     if (componentsDir) {
       config.resolve.alias['@cntrl-site/components/style/components.css'] = path.resolve(componentsDir, 'dist/components.css');
       config.resolve.alias['@cntrl-site/components/utils'] = path.resolve(componentsDir, 'dist/utils.mjs');
+      config.resolve.alias['@cntrl-site/components/elements'] = path.resolve(componentsDir, isServer ? 'dist/elements.node.mjs' : 'dist/elements.mjs');
       config.resolve.alias['@cntrl-site/components'] = path.resolve(componentsDir, 'dist/index.mjs');
     }
     return config;
