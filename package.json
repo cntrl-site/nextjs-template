@@ -13,7 +13,7 @@
     "prebuild": "npm run generate-layouts && npm run generate-sitemap"
   },
   "dependencies": {
-    "@cntrl-site/sdk-nextjs": "^1.10.16",
+    "@cntrl-site/sdk-nextjs": "^1.10.17",
     "next": "^15.5.27",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
