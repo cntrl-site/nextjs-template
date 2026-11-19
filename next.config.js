@@ -1,6 +1,5 @@
 const path = require('path');
 
-const isCodeExport = process.env.CNTRL_BUILD_MODE === 'self-hosted';
 // Staging renders pages on demand with ISR instead of exporting a static site.
 // Dropping `output: 'export'` is what makes ISR legal; the page decides the rest.
 const isStaging = process.env.CNTRL_BUILD_MODE === 'staging';
@@ -28,7 +27,10 @@ const nextConfig = {
     ? { basePath: process.env.NEXT_PUBLIC_BASE_PATH || '' }
     : { output: 'export' }),
   distDir: '_static',
-  assetPrefix: isCodeExport ? './' : undefined,
+  // No assetPrefix, code exports included: Next 15 adds a rewrite for any
+  // assetPrefix, and with a rewrite present the client re-applies the URL on
+  // hydration, appending the trailing slash. A relative prefix then resolves
+  // under the page's own folder and every asset 404s.
   ...(localPackages.length > 0 ? { transpilePackages: localPackages } : {}),
   webpack: (config, { isServer }) => {
     const hasLocalPackages = sdkNextjsDir || sdkDir || componentsDir;
